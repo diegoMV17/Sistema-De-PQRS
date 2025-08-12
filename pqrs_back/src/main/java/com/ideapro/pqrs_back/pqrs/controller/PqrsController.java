@@ -26,8 +26,10 @@ public class PqrsController {
 
     @GetMapping
     public List<Pqrs> listarPqrs() {
-        return pqrsService.listarPqrs();
-    }
+    List<Pqrs> lista = pqrsService.listarPqrs();
+    System.out.println("PQRS listados: " + lista);
+    return lista;
+}
 
     @GetMapping("/{id}")
     public Pqrs obtenerPqrs(@PathVariable Long id) {
