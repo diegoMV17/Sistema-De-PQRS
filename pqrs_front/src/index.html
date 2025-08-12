@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema PQRS - Inicio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                        'serif': ['Playfair Display', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="font-sans antialiased bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <!-- Contenedor dinámico para navbar -->
+    <div id="navbar-container"></div>
+
+    <main>
+        <!-- Hero section específico para sistema PQRS -->
+        <section class="relative overflow-hidden bg-white dark:bg-gray-900 transition-colors duration-300">
+            <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
+                <div class="text-center">
+                    <h1 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl md:text-6xl font-serif">
+                        Sistema <span class="text-blue-600 dark:text-blue-400">PQRS</span>
+                    </h1>
+                    <p class="mx-auto mt-6 max-w-2xl text-lg leading-8 text-gray-600 dark:text-gray-300">
+                        Plataforma oficial para el registro y seguimiento de Peticiones, Quejas, Reclamos y Sugerencias. 
+                        Tu voz es importante para nosotros.
+                    </p>
+                    <div class="mt-10 flex items-center justify-center gap-x-6">
+                        <a href="formulario.html" class="rounded-md bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors duration-200">
+                            Enviar PQRS
+                        </a>
+                        <a href="#info" class="text-sm font-semibold leading-6 text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
+                            Más información <span aria-hidden="true">→</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección informativa sobre tipos de PQRS -->
+        <section id="info" class="py-16 sm:py-24 bg-gray-50 dark:bg-gray-800 transition-colors duration-300">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl font-serif">
+                        Tipos de Solicitudes
+                    </h2>
+                    <p class="mt-4 text-lg text-gray-600 dark:text-gray-300">
+                        Conoce los diferentes tipos de solicitudes que puedes realizar
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+                        <div class="text-blue-600 dark:text-blue-400 text-4xl mb-4">📝</div>
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Peticiones</h3>
+                        <p class="text-gray-600 dark:text-gray-300">Solicitudes de información, documentos o actuaciones administrativas.</p>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+                        <div class="text-yellow-600 dark:text-yellow-400 text-4xl mb-4">⚠️</div>
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Quejas</h3>
+                        <p class="text-gray-600 dark:text-gray-300">Manifestaciones de inconformidad sobre el servicio recibido.</p>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+                        <div class="text-red-600 dark:text-red-400 text-4xl mb-4">🚨</div>
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Reclamos</h3>
+                        <p class="text-gray-600 dark:text-gray-300">Solicitudes de corrección de situaciones irregulares o injustas.</p>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+                        <div class="text-green-600 dark:text-green-400 text-4xl mb-4">💡</div>
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Sugerencias</h3>
+                        <p class="text-gray-600 dark:text-gray-300">Propuestas para mejorar los procesos y servicios.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección de tiempos de respuesta -->
+        <section class="py-16 sm:py-24 bg-white dark:bg-gray-900 transition-colors duration-300">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl font-serif">
+                        Tiempos de Respuesta
+                    </h2>
+                    <p class="mt-4 text-lg text-gray-600 dark:text-gray-300">
+                        Conoce los plazos establecidos para cada tipo de solicitud
+                    </p>
+                </div>
+
+                <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">📅 Plazos Legales</h3>
+                            <ul class="space-y-3 text-gray-600 dark:text-gray-300">
+                                <li><strong>Peticiones:</strong> 15 días hábiles</li>
+                                <li><strong>Quejas:</strong> 15 días hábiles</li>
+                                <li><strong>Reclamos:</strong> 15 días hábiles</li>
+                                <li><strong>Sugerencias:</strong> 15 días hábiles</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">📋 Proceso</h3>
+                            <ol class="space-y-3 text-gray-600 dark:text-gray-300">
+                                <li><strong>1.</strong> Recepción y radicación</li>
+                                <li><strong>2.</strong> Asignación al área competente</li>
+                                <li><strong>3.</strong> Análisis y gestión</li>
+                                <li><strong>4.</strong> Respuesta al ciudadano</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Contenedor dinámico para footer -->
+    <div id="footer-container"></div>
+
+    <!-- Scripts para navbar y footer dinámicos -->
+    <script src="navbar.js"></script>
+    <script src="footer.js"></script>
+</body>
+</html>
