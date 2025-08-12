@@ -51,5 +51,7 @@ public class PeticionarioController {
     @GetMapping("/buscarPorDocumento/{documento}")
     public List<Peticionario> buscarPorDocumento(@PathVariable String documento) {
         return peticionarioService.buscarPorDocumento(documento);
+
     }
+    // Buscar por nombre
 }

@@ -23,7 +23,7 @@ public class User {
     private String credencial;
     @Column(unique = true)
     private String email;
-    private String constrasenia;
+    private String constrasena;
 
-    
+    private String rol; // "ADMIN" o "FUNCIONARIO"
 }
