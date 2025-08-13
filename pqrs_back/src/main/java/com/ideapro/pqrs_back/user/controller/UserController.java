@@ -3,24 +3,19 @@ package com.ideapro.pqrs_back.user.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 import com.ideapro.pqrs_back.user.model.User;
 import com.ideapro.pqrs_back.user.service.UserService;
 import com.ideapro.pqrs_back.user.exception.UserException;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import com.ideapro.pqrs_back.user.Security.UserDetailsImpl;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
+
     @Autowired
     private UserService userService;
 
@@ -40,7 +35,26 @@ public class UserController {
     }
 
     @DeleteMapping("/eliminar/{id}")
-    public ResponseEntity<String> eliminarUser(@PathVariable Long id) {
+    public ResponseEntity<String> eliminarUser(@PathVariable Long id, Authentication authentication) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+       
+        if (!"ADMIN".equalsIgnoreCase(userDetails.getRol())) {
+            return ResponseEntity.status(403).body("No tiene permisos para eliminar usuarios");
+        }
+
+       
+        if (userDetails.getId().equals(id)) {
+            return ResponseEntity.badRequest().body("No puede eliminar su propio usuario");
+        }
+
+       
+        User usuarioAEliminar = userService.obtenerUser(id);
+        if (usuarioAEliminar == null) {
+            return ResponseEntity.badRequest().body("El usuario que intenta eliminar no existe");
+        }
+
+       
         userService.eliminarUser(id);
         return ResponseEntity.ok("Usuario eliminado correctamente.");
     }
