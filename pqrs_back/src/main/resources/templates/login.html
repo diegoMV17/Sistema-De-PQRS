@@ -126,59 +126,78 @@
     <script src="navbar.js"></script>
     <script src="footer.js"></script>
     <script>
-        // Toggle password visibility
-        document.getElementById('togglePassword').addEventListener('click', function() {
-            const password = document.getElementById('password');
-            const eyeIcon = document.getElementById('eyeIcon');
-            
-            if (password.type === 'password') {
-                password.type = 'text';
-                eyeIcon.innerHTML = `
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
-                `;
-            } else {
-                password.type = 'password';
-                eyeIcon.innerHTML = `
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                `;
-            }
-        });
+ <script>
+    // Toggle password visibility
+    document.getElementById('togglePassword').addEventListener('click', function() {
+        const password = document.getElementById('password');
+        const eyeIcon = document.getElementById('eyeIcon');
+        
+        if (password.type === 'password') {
+            password.type = 'text';
+            eyeIcon.innerHTML = `
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+            `;
+        } else {
+            password.type = 'password';
+            eyeIcon.innerHTML = `
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            `;
+        }
+    });
 
-        // Handle form submission
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const loginButton = document.getElementById('loginButton');
-            const loginText = document.getElementById('loginText');
-            const loginSpinner = document.getElementById('loginSpinner');
-            const errorMessage = document.getElementById('errorMessage');
-            
-            // Show loading state
-            loginButton.disabled = true;
-            loginText.textContent = 'Iniciando sesión...';
-            loginSpinner.classList.remove('hidden');
-            errorMessage.classList.add('hidden');
-            
-            // Simulate login process
-            setTimeout(() => {
-                if (email === 'admin@pqrs.com' && password === 'admin123') {
-                    localStorage.setItem('isLoggedIn', 'true');
-                    localStorage.setItem('userEmail', email);
-                    window.location.href = 'index.html';
-                } else {
-                    errorMessage.textContent = 'Credenciales incorrectas. Intenta con admin@pqrs.com / admin123';
-                    errorMessage.classList.remove('hidden');
-                    
-                    loginButton.disabled = false;
-                    loginText.textContent = 'Iniciar Sesión';
-                    loginSpinner.classList.add('hidden');
-                }
-            }, 1500);
-        });
-    </script>
+    // Handle login form submission
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const loginButton = document.getElementById('loginButton');
+        const loginText = document.getElementById('loginText');
+        const loginSpinner = document.getElementById('loginSpinner');
+        const errorMessage = document.getElementById('errorMessage');
+
+        errorMessage.classList.add('hidden');
+
+        loginButton.disabled = true;
+        loginText.textContent = 'Iniciando sesión...';
+        loginSpinner.classList.remove('hidden');
+
+        try {
+            const response = await fetch('/api/users/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    credencial: email,
+                    contrasena: password
+                })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                // Guardamos token o datos de usuario si tu API los devuelve
+                localStorage.setItem('token', data.token || '');
+                localStorage.setItem('userEmail', email);
+                window.location.href = 'index.html';
+            } else if(response.status === 401) {
+                errorMessage.textContent = 'Credenciales incorrectas';
+                errorMessage.classList.remove('hidden');
+            } else {
+                const errText = await response.text();
+                errorMessage.textContent = errText || 'Error al iniciar sesión';
+                errorMessage.classList.remove('hidden');
+            }
+        } catch (err) {
+            errorMessage.textContent = 'Error de conexión con el servidor';
+            errorMessage.classList.remove('hidden');
+        } finally {
+            loginButton.disabled = false;
+            loginText.textContent = 'Iniciar Sesión';
+            loginSpinner.classList.add('hidden');
+        }
+    });
+</script>
+
     <div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>
