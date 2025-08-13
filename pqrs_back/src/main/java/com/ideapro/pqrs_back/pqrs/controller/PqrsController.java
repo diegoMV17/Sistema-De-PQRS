@@ -27,6 +27,7 @@ public class PqrsController {
     @GetMapping
     public List<Pqrs> listarPqrs() {
         return pqrsService.listarPqrs();
+        
     }
 
     @GetMapping("/{id}")
