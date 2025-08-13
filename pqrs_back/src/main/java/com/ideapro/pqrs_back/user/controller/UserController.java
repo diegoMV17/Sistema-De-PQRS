@@ -57,7 +57,7 @@ public class UserController {
 
     @PostMapping("/login")
     public User login(@RequestBody User user) {
-        return userService.login(user.getCredencial(), user.getConstrasena());
+        return userService.login(user.getCredencial(), user.getContrasena());
     }
 
     @ExceptionHandler(UserException.class)

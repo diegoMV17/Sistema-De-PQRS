@@ -47,14 +47,14 @@ public class UserService {
             throw new RuntimeException("La credencial ya está registrada.");
         }
         // Encriptar la contraseña antes de guardar
-        user.setConstrasena(passwordEncoder.encode(user.getConstrasena()));
+        user.setContrasena(passwordEncoder.encode(user.getContrasena()));
         return userRepository.save(user);
     }
 
     // Login de usuario con comparación encriptada
     public User login(String credencial, String constrasenia) {
         User user = userRepository.findByCredencial(credencial);
-        if (user != null && passwordEncoder.matches(constrasenia, user.getConstrasena())) {
+        if (user != null && passwordEncoder.matches(constrasenia, user.getContrasena())) {
             return user;
         }
         return null;
