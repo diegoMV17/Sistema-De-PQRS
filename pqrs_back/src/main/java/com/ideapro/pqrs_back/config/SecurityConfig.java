@@ -22,25 +22,38 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
-            
-            // ← AGREGAR CONFIGURACIÓN DE SESIONES
+
+            // Política de sesión sin estado (JWT)
             .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
-            
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
             .authorizeHttpRequests(auth -> auth
-                // ← CAMBIAR ESTAS RUTAS POR LAS QUE REALMENTE TIENES
-                .requestMatchers("/auth/**").permitAll()  // Para /auth/login y /auth/register
-                .requestMatchers("/error").permitAll()
+                // Rutas públicas (controladores y recursos estáticos)
+                .requestMatchers(
+                    "/auth/**",      // Login, registro vía API
+                    "/error",        // Página de error
+                    "/",             // Página principal
+                    "/login",        // Vista login
+                    "/register",     // Vista registro
+                    "/dashboard",    // Vista dashboard
+                    "/formulario",   // Vista formulario
+                    "/css/**",       // Archivos CSS
+                    "/js/**",        // Archivos JS
+                    "/images/**"     // Imágenes
+                ).permitAll()
+
+                // El resto requiere autenticación
                 .anyRequest().authenticated()
             )
+
+            // Filtro JWT antes del filtro de autenticación por usuario/contraseña
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-            
+
         return http.build();
     }
-    @Bean 
+
+    @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         return http.getSharedObject(AuthenticationManager.class);
     }
-    
 }
