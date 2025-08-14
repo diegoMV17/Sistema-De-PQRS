@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-PqrsBackApplication<pqrs_back>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.ideapro.pqrs_back.PqrsBackApplication",
+            "projectName": "pqrs_back",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

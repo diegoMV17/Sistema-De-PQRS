@@ -85,42 +85,67 @@
 
         <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
           <div class="flex items-center justify-between pb-2">
-            <h3 class="text-sm font-medium text-slate-600">Usuarios Registrados</h3>
-            👥
+            <h3 class="text-sm font-medium text-slate-600">En Proceso</h3>
+            ⏳
           </div>
-          <div class="text-2xl font-bold text-slate-900">50</div>
-          <p class="text-xs text-slate-500">Total de usuarios en el sistema</p>
+          <div class="text-2xl font-bold text-orange-600">5</div>
+          <p class="text-xs text-slate-500">Pendientes de respuesta</p>
         </div>
 
         <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
           <div class="flex items-center justify-between pb-2">
-            <h3 class="text-sm font-medium text-slate-600">Reclamos - Quejas</h3>
-            ❗
+            <h3 class="text-sm font-medium text-slate-600">Resueltas</h3>
+            ✅
           </div>
-          <div class="text-2xl font-bold text-slate-900">3</div>
-          <p class="text-xs text-slate-500">Total de quejas registradas</p>
+          <div class="text-2xl font-bold text-green-600">6</div>
+          <p class="text-xs text-slate-500">Completadas exitosamente</p>
         </div>
 
         <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
           <div class="flex items-center justify-between pb-2">
-            <h3 class="text-sm font-medium text-slate-600">Reclamos - Sugerencias</h3>
-            💡
+            <h3 class="text-sm font-medium text-slate-600">Rechazadas</h3>
+            ❌
           </div>
-          <div class="text-2xl font-bold text-slate-900">4</div>
-          <p class="text-xs text-slate-500">Total de sugerencias registradas</p>
-        </div>
-
-        <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
-          <div class="flex items-center justify-between pb-2">
-            <h3 class="text-sm font-medium text-slate-600">Reclamos - Solicitudes</h3>
-            📄
-          </div>
-          <div class="text-2xl font-bold text-slate-900">5</div>
-          <p class="text-xs text-slate-500">Total de solicitudes registradas</p>
+          <div class="text-2xl font-bold text-red-600">1</div>
+          <p class="text-xs text-slate-500">Requieren revisión</p>
         </div>
       </div>
 
-     
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Recent PQRS -->
+        <div class="bg-white border border-slate-200 rounded-lg shadow-sm">
+          <div class="p-4 border-b border-slate-200 flex items-center justify-between">
+            <h2 class="text-lg font-semibold">PQRS Recientes</h2>
+            <button class="flex items-center px-3 py-1 border border-slate-300 rounded text-slate-600 hover:bg-slate-50 text-sm">
+              🔍 Ver todas
+            </button>
+          </div>
+          <div class="p-4 space-y-4">
+            <div class="flex items-center justify-between p-3 border border-slate-200 rounded-lg">
+              <div>
+                <h4 class="font-medium text-slate-900">Solicitud de información</h4>
+                <p class="text-sm text-slate-500">Petición • Hace 2 días</p>
+              </div>
+              <span class="px-2 py-1 rounded-full text-xs bg-orange-100 text-orange-700">En proceso</span>
+            </div>
+
+            <div class="flex items-center justify-between p-3 border border-slate-200 rounded-lg">
+              <div>
+                <h4 class="font-medium text-slate-900">Problema con el servicio</h4>
+                <p class="text-sm text-slate-500">Queja • Hace 5 días</p>
+              </div>
+              <span class="px-2 py-1 rounded-full text-xs bg-green-100 text-green-700">Resuelta</span>
+            </div>
+
+            <div class="flex items-center justify-between p-3 border border-slate-200 rounded-lg">
+              <div>
+                <h4 class="font-medium text-slate-900">Mejora en el proceso</h4>
+                <p class="text-sm text-slate-500">Sugerencia • Hace 1 semana</p>
+              </div>
+              <span class="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-700">Revisando</span>
+            </div>
+          </div>
+        </div>
 
         <!-- Quick Actions -->
         <div class="bg-white border border-slate-200 rounded-lg shadow-sm">
@@ -147,48 +172,8 @@
           </div>
         </div>
       </div>
-
-      <!-- Tabla de Usuarios -->
-      <div class="bg-white border border-slate-200 rounded-lg shadow-sm mt-6">
-        <div class="p-4 border-b border-slate-200">
-          <h2 class="text-lg font-semibold">Lista de Usuarios</h2>
-        </div>
-        <div class="p-4">
-          <table class="min-w-full border border-slate-200">
-            <thead>
-              <tr class="bg-slate-100">
-                <th class="border border-slate-300 px-4 py-2">Nombre</th>
-                <th class="border border-slate-300 px-4 py-2">Email</th>
-                <th class="border border-slate-300 px-4 py-2">Rol</th>
-                <th class="border border-slate-300 px-4 py-2">Fecha de Registro</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="border border-slate-300 px-4 py-2">Juan Pérez</td>
-                <td class="border border-slate-300 px-4 py-2">juan.perez@example.com</td>
-                <td class="border border-slate-300 px-4 py-2">Administrador</td>
-                <td class="border border-slate-300 px-4 py-2">01/01/2023</td>
-              </tr>
-              <tr>
-                <td class="border border-slate-300 px-4 py-2">María López</td>
-                <td class="border border-slate-300 px-4 py-2">maria.lopez@example.com</td>
-                <td class="border border-slate-300 px-4 py-2">Usuario</td>
-                <td class="border border-slate-300 px-4 py-2">15/02/2023</td>
-              </tr>
-              <tr>
-                <td class="border border-slate-300 px-4 py-2">Carlos García</td>
-                <td class="border border-slate-300 px-4 py-2">carlos.garcia@example.com</td>
-                <td class="border border-slate-300 px-4 py-2">Usuario</td>
-                <td class="border border-slate-300 px-4 py-2">20/03/2023</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
     </main>
   </div>
 
 </body>
 </html>
-

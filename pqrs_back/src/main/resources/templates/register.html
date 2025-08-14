@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema PQRS - Registro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                        'serif': ['Playfair Display', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="font-sans antialiased bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="min-h-screen py-12">
+        <div class="max-w-md w-full space-y-8 mx-auto">
+            <div class="text-center">
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Crear Cuenta</h2>
+                <p class="mt-2 text-gray-600 dark:text-gray-400">Regístrate en el Sistema PQRS</p>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 py-8 px-6 shadow-lg rounded-lg border border-gray-200 dark:border-gray-700">
+                <form id="registerForm" class="space-y-6">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="firstName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nombre</label>
+                            <input type="text" id="firstName" required class="w-full px-3 py-2 border rounded-md shadow-sm dark:bg-gray-700 dark:text-white" placeholder="Juan">
+                        </div>
+                        <div>
+                            <label for="lastName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Apellido</label>
+                            <input type="text" id="lastName" required class="w-full px-3 py-2 border rounded-md shadow-sm dark:bg-gray-700 dark:text-white" placeholder="Pérez">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Correo Electrónico</label>
+                        <input type="email" id="email" required class="w-full px-3 py-2 border rounded-md shadow-sm dark:bg-gray-700 dark:text-white" placeholder="tu@email.com">
+                    </div>
+
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Teléfono</label>
+                        <input type="tel" id="phone" required class="w-full px-3 py-2 border rounded-md shadow-sm dark:bg-gray-700 dark:text-white" placeholder="300 123 4567">
+                    </div>
+
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Contraseña</label>
+                        <div class="relative">
+                            <input type="password" id="password" required minlength="6" class="w-full px-3 py-2 pr-10 border rounded-md shadow-sm dark:bg-gray-700 dark:text-white" placeholder="••••••••">
+                            <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                                <svg id="eyeIcon" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Mínimo 6 caracteres</p>
+                    </div>
+
+                    <div>
+                        <label for="confirmPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Confirmar Contraseña</label>
+                        <input type="password" id="confirmPassword" required class="w-full px-3 py-2 border rounded-md shadow-sm dark:bg-gray-700 dark:text-white" placeholder="••••••••">
+                    </div>
+
+                    <div class="flex items-center">
+                        <input id="terms" type="checkbox" required class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+                        <label for="terms" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                            Acepto los <a href="#" class="text-blue-600 hover:text-blue-500 dark:text-blue-400">términos y condiciones</a>
+                        </label>
+                    </div>
+
+                    <button type="submit" id="registerButton" class="w-full flex justify-center py-2 px-4 rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                        <span id="registerText">Crear Cuenta</span>
+                        <svg id="registerSpinner" class="hidden animate-spin -mr-1 ml-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </button>
+
+                    <div class="text-center mt-2">
+                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                            ¿Ya tienes una cuenta?
+                            <a href="login.html" class="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400">Inicia sesión aquí</a>
+                        </p>
+                    </div>
+                </form>
+
+                <div id="errorMessage" class="hidden mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-md text-sm"></div>
+                <div id="successMessage" class="hidden mt-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-md text-sm"></div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+document.getElementById('registerForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const firstName = document.getElementById('firstName').value;
+    const lastName = document.getElementById('lastName').value;
+    const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone').value;
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    const registerButton = document.getElementById('registerButton');
+    const registerText = document.getElementById('registerText');
+    const registerSpinner = document.getElementById('registerSpinner');
+    const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
+
+    // Validación de contraseñas
+    if(password !== confirmPassword){
+        errorMessage.textContent = "Las contraseñas no coinciden.";
+        errorMessage.classList.remove('hidden');
+        return;
+    }
+
+    registerButton.disabled = true;
+    registerText.textContent = 'Creando cuenta...';
+    registerSpinner.classList.remove('hidden');
+    errorMessage.classList.add('hidden');
+    successMessage.classList.add('hidden');
+
+    try {
+        const response = await fetch('../auth/register', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                nombre: firstName,
+                apellido: lastName,
+                credencial: email,
+                email: email,
+                contrasena: password,
+                rol: 'FUNCIONARIO' // Cambiar a 'ADMIN' si corresponde
+            }),
+            
+        });
+
+        const data = await response.json();
+
+        if(response.ok){
+            successMessage.textContent = "Cuenta creada correctamente. Redirigiendo al login...";
+            successMessage.classList.remove('hidden');
+            setTimeout(()=>window.location.href='login.html', 2000);
+        } else {
+            errorMessage.textContent = data.error || 'Error al crear la cuenta.';
+            errorMessage.classList.remove('hidden');
+        }
+    } catch(err){
+        errorMessage.textContent = "Error de conexión con el servidor.";
+        errorMessage.classList.remove('hidden');
+    } finally {
+        registerButton.disabled = false;
+        registerText.textContent = 'Crear Cuenta';
+        registerSpinner.classList.add('hidden');
+    }
+});
+</script>
+
+</body>
+</html>

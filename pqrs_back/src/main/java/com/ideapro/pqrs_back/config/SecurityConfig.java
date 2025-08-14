@@ -26,35 +26,27 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            
+            // ← AGREGAR CONFIGURACIÓN DE SESIONES
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            
             .authorizeHttpRequests(auth -> auth
-                // Rutas públicas
-                .requestMatchers("/auth/**").permitAll()
+                // ← CAMBIAR ESTAS RUTAS POR LAS QUE REALMENTE TIENES
+                .requestMatchers("/auth/**").permitAll()  // Para /auth/login y /auth/register
                 .requestMatchers("/error").permitAll()
-                .requestMatchers("/api/pqrs/crear").permitAll() // Cualquiera puede crear PQRS
-
-                // Rutas solo para ADMIN y FUNCIONARIO
-                .requestMatchers("/api/pqrs/listar", "/api/pqrs/contar").hasAnyRole("ADMIN", "FUNCIONARIO")
-
-                // Rutas solo para ADMIN
-                .requestMatchers("/api/users/**").hasRole("ADMIN")
-
-                // Cualquier otra requiere estar autenticado
                 .anyRequest().authenticated()
             )
+
+            // Filtro JWT antes del filtro de autenticación por usuario/contraseña
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
-
-   @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-    return authConfig.getAuthenticationManager();
-}
-@Bean
-public UserDetailsService userDetailsService(UserRepository userRepository) {
-    return new UserDetailsServiceImpl(userRepository);
-}
-
+    @Bean 
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        return http.getSharedObject(AuthenticationManager.class);
+    }
     
 }
