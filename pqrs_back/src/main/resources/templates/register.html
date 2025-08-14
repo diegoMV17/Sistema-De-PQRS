@@ -104,69 +104,71 @@
 
     <div th:replace="~{fragments/footer :: footer}"></div>
 
-    <script>
-    // Toggle password
-    document.getElementById('togglePassword').addEventListener('click', function() {
-        const password = document.getElementById('password');
-        const eyeIcon = document.getElementById('eyeIcon');
-        if(password.type === 'password') password.type = 'text';
-        else password.type = 'password';
-    });
+<script>
+document.getElementById('registerForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
 
-    // Submit form
-    document.getElementById('registerForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
+    const firstName = document.getElementById('firstName').value;
+    const lastName = document.getElementById('lastName').value;
+    const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone').value;
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
 
-        const firstName = document.getElementById('firstName').value;
-        const lastName = document.getElementById('lastName').value;
-        const email = document.getElementById('email').value;
-        const phone = document.getElementById('phone').value;
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
+    const registerButton = document.getElementById('registerButton');
+    const registerText = document.getElementById('registerText');
+    const registerSpinner = document.getElementById('registerSpinner');
+    const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
 
-        const registerButton = document.getElementById('registerButton');
-        const registerText = document.getElementById('registerText');
-        const registerSpinner = document.getElementById('registerSpinner');
-        const errorMessage = document.getElementById('errorMessage');
-        const successMessage = document.getElementById('successMessage');
+    // Validación de contraseñas
+    if(password !== confirmPassword){
+        errorMessage.textContent = "Las contraseñas no coinciden.";
+        errorMessage.classList.remove('hidden');
+        return;
+    }
 
-        if(password !== confirmPassword){
-            errorMessage.textContent = "Las contraseñas no coinciden.";
+    registerButton.disabled = true;
+    registerText.textContent = 'Creando cuenta...';
+    registerSpinner.classList.remove('hidden');
+    errorMessage.classList.add('hidden');
+    successMessage.classList.add('hidden');
+
+    try {
+        const response = await fetch('../auth/register', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                nombre: firstName,
+                apellido: lastName,
+                credencial: email,
+                email: email,
+                contrasena: password,
+                rol: 'FUNCIONARIO' // Cambiar a 'ADMIN' si corresponde
+            }),
+            
+        });
+
+        const data = await response.json();
+
+        if(response.ok){
+            successMessage.textContent = "Cuenta creada correctamente. Redirigiendo al login...";
+            successMessage.classList.remove('hidden');
+            setTimeout(()=>window.location.href='login.html', 2000);
+        } else {
+            errorMessage.textContent = data.error || 'Error al crear la cuenta.';
             errorMessage.classList.remove('hidden');
-            return;
         }
+    } catch(err){
+        errorMessage.textContent = "Error de conexión con el servidor.";
+        errorMessage.classList.remove('hidden');
+    } finally {
+        registerButton.disabled = false;
+        registerText.textContent = 'Crear Cuenta';
+        registerSpinner.classList.add('hidden');
+    }
+});
+</script>
 
-        registerButton.disabled = true;
-        registerText.textContent = 'Creando cuenta...';
-        registerSpinner.classList.remove('hidden');
-        errorMessage.classList.add('hidden');
-        successMessage.classList.add('hidden');
-
-        try {
-            const response = await fetch('/api/users/register', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({firstName, lastName, credencial: email, phone, contrasena: password})
-            });
-
-            if(response.ok){
-                successMessage.textContent = "Cuenta creada correctamente. Redirigiendo al login...";
-                successMessage.classList.remove('hidden');
-                setTimeout(()=>window.location.href='login.html', 2000);
-            } else {
-                const errorText = await response.text();
-                errorMessage.textContent = errorText || 'Error al crear la cuenta.';
-                errorMessage.classList.remove('hidden');
-            }
-        } catch(err){
-            errorMessage.textContent = "Error de conexión con el servidor.";
-            errorMessage.classList.remove('hidden');
-        } finally {
-            registerButton.disabled = false;
-            registerText.textContent = 'Crear Cuenta';
-            registerSpinner.classList.add('hidden');
-        }
-    });
-    </script>
 </body>
 </html>

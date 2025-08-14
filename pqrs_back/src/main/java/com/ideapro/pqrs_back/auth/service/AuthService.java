@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+    
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -34,6 +35,8 @@ public class AuthService {
         String token = jwtUtil.generateToken(user.getCredencial(), user.getRol());
         return ResponseEntity.ok(token);
     }
+
+
 
     public User register(String nombre, String apellido, String credencial,
             String email, String contrasena, String rol) {
@@ -57,4 +60,7 @@ public class AuthService {
 
         return userRepository.save(newUser);
     }
+
+   
+
 }
