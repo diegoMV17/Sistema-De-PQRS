@@ -22,8 +22,9 @@ public class PeticionarioController {
     @Autowired
     private PeticionarioService peticionarioService;
     
+   //NO NECESITA AUTORIZACION
     @PostMapping
-    public Peticionario crearPeticionario(@RequestBody Peticionario peticionario) {
+    public Peticionario crearPeticionario(@RequestBody Peticionario peticionario) { 
         return peticionarioService.crearPeticionario(peticionario);
     }
     @GetMapping

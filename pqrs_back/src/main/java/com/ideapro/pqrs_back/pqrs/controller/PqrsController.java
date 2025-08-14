@@ -19,6 +19,7 @@ public class PqrsController {
     @Autowired
     private PqrsService pqrsService;
 
+       //NO NECESITA AUTORIZACION
     @PostMapping
     public Pqrs crearPqrs(@RequestBody Pqrs pqrs) {
         return pqrsService.crearPqrs(pqrs);

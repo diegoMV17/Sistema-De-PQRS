@@ -64,11 +64,13 @@ public class UserController {
         return userService.buscarEmail(email);
     }
 
+       //NO NECESITA AUTORIZACION
     @PostMapping("/register")
     public User register(@RequestBody User user) {
         return userService.register(user);
     }
 
+       //NO NECESITA AUTORIZACION
     @PostMapping("/login")
     public User login(@RequestBody User user) {
         return userService.login(user.getCredencial(), user.getContrasena());
