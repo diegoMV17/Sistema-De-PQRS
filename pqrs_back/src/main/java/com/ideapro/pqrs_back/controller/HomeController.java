@@ -4,24 +4,41 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+
 @Controller
 public class HomeController {
 
+    private String getThemeFromCookies(HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("theme".equals(cookie.getName()) && "dark".equals(cookie.getValue())) {
+                    return "dark";
+                }
+            }
+        }
+        return "light";
+    }
+
     @GetMapping("/")
-    public String home(Model model) {
+    public String home(Model model, HttpServletRequest request) {
         model.addAttribute("currentPage", "home");
+        model.addAttribute("theme", getThemeFromCookies(request));
         return "index";
     }
 
     @GetMapping("/login")
-    public String login(Model model) {
+    public String login(Model model, HttpServletRequest request) {
         model.addAttribute("currentPage", "login");
+        model.addAttribute("theme", getThemeFromCookies(request));
         return "login";
     }
 
     @GetMapping("/register")
-    public String registro(Model model) {
+    public String registro(Model model,HttpServletRequest request) {
         model.addAttribute("currentPage", "register");
+        model.addAttribute("theme", getThemeFromCookies(request));
         return "register";
     }
 
