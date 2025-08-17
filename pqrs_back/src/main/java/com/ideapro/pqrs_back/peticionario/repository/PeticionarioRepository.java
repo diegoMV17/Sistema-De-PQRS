@@ -10,5 +10,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface PeticionarioRepository extends JpaRepository<Peticionario, Long> {
        // buscar por documento
     List<Peticionario> findByDocumento(String documento);
-    Optional<Peticionario> findByEmail(String email);
+    List<Peticionario> findByEmail(String email);
 }

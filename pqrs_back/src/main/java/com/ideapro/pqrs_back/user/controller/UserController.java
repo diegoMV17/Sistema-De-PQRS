@@ -4,13 +4,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.ideapro.pqrs_back.user.model.User;
 import com.ideapro.pqrs_back.user.service.UserService;
-import com.ideapro.pqrs_back.user.exception.UserException;
-import com.ideapro.pqrs_back.user.Security.UserDetailsImpl;
 
 @RestController
 @RequestMapping("/api/users")
@@ -20,41 +18,26 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
+    @PreAuthorize("hasAuthority(ADMIN)")
     public User crearUser(@RequestBody User user) {
         return userService.crearUser(user);
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     public List<User> listarUser() {
         return userService.listarUser();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public User obtenerUser(@PathVariable Long id) {
         return userService.obtenerUser(id);
     }
 
     @DeleteMapping("/eliminar/{id}")
-    public ResponseEntity<String> eliminarUser(@PathVariable Long id, Authentication authentication) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-
-       
-        if (!"ADMIN".equalsIgnoreCase(userDetails.getRol())) {
-            return ResponseEntity.status(403).body("No tiene permisos para eliminar usuarios");
-        }
-
-       
-        if (userDetails.getId().equals(id)) {
-            return ResponseEntity.badRequest().body("No puede eliminar su propio usuario");
-        }
-
-       
-        User usuarioAEliminar = userService.obtenerUser(id);
-        if (usuarioAEliminar == null) {
-            return ResponseEntity.badRequest().body("El usuario que intenta eliminar no existe");
-        }
-
-       
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<String> eliminarUser(@PathVariable Long id) {
         userService.eliminarUser(id);
         return ResponseEntity.ok("Usuario eliminado correctamente.");
     }
@@ -66,6 +49,7 @@ public class UserController {
 
        //NO NECESITA AUTORIZACION
     @PostMapping("/register")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public User register(@RequestBody User user) {
         return userService.register(user);
     }
@@ -76,8 +60,4 @@ public class UserController {
         return userService.login(user.getCredencial(), user.getContrasena());
     }
 
-    @ExceptionHandler(UserException.class)
-    public ResponseEntity<String> handleUserException(UserException ex) {
-        return ResponseEntity.badRequest().body(ex.getMessage());
-    }
 }
