@@ -32,7 +32,7 @@ public class AuthService {
                     .body("Contraseña incorrecta");
         }
 
-        String token = jwtUtil.generateToken(user.getCredencial(), user.getRol());
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRol());
         return ResponseEntity.ok(token);
     }
 
