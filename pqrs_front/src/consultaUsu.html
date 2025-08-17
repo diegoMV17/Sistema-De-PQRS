@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema PQRS - Peticiones, Quejas, Reclamos y Sugerencias</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+
+    <!-- Navbar -->
+    <nav class="bg-white dark:bg-gray-800 shadow-lg border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
+        <div id="navbar-container"></div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <<main class="px-4 py-10 bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 min-h-[70vh]">
+    <div class="max-w-3xl mx-auto text-center mb-10">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Consulta el estado de tu PQRS</h1>
+        <p class="text-gray-600 dark:text-gray-400 mt-2">
+            Ingrese su número de documento para consultar el estado de su petición, queja, reclamo o sugerencia.
+        </p>
+    </div>
+
+    <!-- Formulario -->
+    <div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+        <form 
+            id="consultaForm" 
+            method="POST"
+            class="flex flex-col sm:flex-row items-center sm:space-x-4 space-y-4 sm:space-y-0"
+        >
+            <label for="docIdentidad" class="sr-only">Documento de Identidad</label>
+            <input
+                type="text"
+                id="docIdentidad"
+                name="docIdentidad"
+                placeholder="Ingrese su documento de identidad"
+                autocomplete="off"
+                pattern="\d{6,15}"
+                title="Ingrese un documento de identidad válido (6 a 15 dígitos numéricos)"
+                required
+                class="flex-grow border border-blue-300 rounded-md px-4 py-3 text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 transition w-full"
+            />
+            <button
+                type="submit"
+                class="bg-blue-600 hover:bg-blue-700 transition text-white font-semibold px-6 py-3 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-600 w-full sm:w-auto"
+            >
+                Consultar
+            </button>
+        </form>
+    </div>
+
+    <!-- Tabla oculta -->
+    <div id="tablaContainer" class="mt-10 overflow-x-auto hidden max-w-4xl mx-auto">
+        <table class="min-w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg">
+            <thead>
+                <tr class="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
+                    <th class="py-3 px-4 border-b">Cedula</th>
+                    <th class="py-3 px-4 border-b">Numero de radicado</th>
+                    <th class="py-3 px-4 border-b">Descripcion</th>
+                    <th class="py-3 px-4 border-b">Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+            
+            </tbody>
+        </table>
+    </div>
+</main>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <!-- Scripts para navbar, footer y mostrar tabla -->
+    <script src="navbar.js"></script>
+    <script src="footer.js"></script>
+
+    <script>
+        // Modo oscuro
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        html.classList.toggle('dark', currentTheme === 'dark');
+
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                html.classList.toggle('dark');
+                const newTheme = html.classList.contains('dark') ? 'dark' : 'light';
+                localStorage.setItem('theme', newTheme);
+            });
+        }
+
+        // Menú móvil
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        if (mobileMenuButton && mobileMenu) {
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+
+        // Mostrar tabla al enviar formulario
+        document.getElementById("consultaForm").addEventListener("submit", function(e) {
+            e.preventDefault(); // Evita recargar la página
+            document.getElementById("tablaContainer").classList.remove("hidden");
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard PQRS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-50">
+
+  <!-- Top Navigation -->
+  <nav class="bg-slate-800 border-b border-slate-700">
+    <div class="flex items-center justify-between px-6 py-4">
+      <div class="text-xl font-semibold text-white">
+        Sistema <span class="text-blue-400">PQRS</span>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <button class="text-slate-300 hover:text-white transition-colors relative">
+          <!-- Icono campana -->
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405C18.21 15.21 18 14.702 18 14V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3c0 .702-.21 1.21-.595 1.595L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+          </svg>
+          <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">3</span>
+        </button>
+
+        <div class="flex items-center gap-2 text-slate-300">
+          <!-- Icono usuario -->
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A9 9 0 0112 15a9 9 0 016.879 2.804M15 11a3 3 0 10-6 0 3 3 0 006 0z"></path>
+          </svg>
+          <span class="hidden md:block">Juan Pérez</span>
+        </div>
+
+        <button class="text-slate-300 hover:text-white transition-colors">
+          <!-- Icono logout -->
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="flex">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white border-r border-slate-200 min-h-[calc(100vh-80px)]">
+      <div class="p-6">
+        <nav class="space-y-2">
+          <a href="#" class="flex items-center gap-3 px-3 py-2 text-blue-600 bg-blue-50 rounded-lg font-medium">
+            🏠 Dashboard
+          </a>
+          <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">
+            ➕ Nueva PQRS
+          </a>
+          <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">
+            📄 Mis PQRS
+          </a>
+          <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">
+            📊 Reportes
+          </a>
+          <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">
+            ⚙️ Configuración
+          </a>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6">
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-slate-900 mb-2">Dashboard</h1>
+        <p class="text-slate-600">Bienvenido de vuelta, Juan. Aquí tienes un resumen de tus PQRS.</p>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+          <div class="flex items-center justify-between pb-2">
+            <h3 class="text-sm font-medium text-slate-600">Total PQRS</h3>
+            📄
+          </div>
+          <div class="text-2xl font-bold text-slate-900">12</div>
+          <p class="text-xs text-slate-500">+2 desde el mes pasado</p>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+          <div class="flex items-center justify-between pb-2">
+            <h3 class="text-sm font-medium text-slate-600">Usuarios Registrados</h3>
+            👥
+          </div>
+          <div class="text-2xl font-bold text-slate-900">50</div>
+          <p class="text-xs text-slate-500">Total de usuarios en el sistema</p>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+          <div class="flex items-center justify-between pb-2">
+            <h3 class="text-sm font-medium text-slate-600">Reclamos - Quejas</h3>
+            ❗
+          </div>
+          <div class="text-2xl font-bold text-slate-900">3</div>
+          <p class="text-xs text-slate-500">Total de quejas registradas</p>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+          <div class="flex items-center justify-between pb-2">
+            <h3 class="text-sm font-medium text-slate-600">Reclamos - Sugerencias</h3>
+            💡
+          </div>
+          <div class="text-2xl font-bold text-slate-900">4</div>
+          <p class="text-xs text-slate-500">Total de sugerencias registradas</p>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+          <div class="flex items-center justify-between pb-2">
+            <h3 class="text-sm font-medium text-slate-600">Reclamos - Solicitudes</h3>
+            📄
+          </div>
+          <div class="text-2xl font-bold text-slate-900">5</div>
+          <p class="text-xs text-slate-500">Total de solicitudes registradas</p>
+        </div>
+      </div>
+
+     
+
+        <!-- Quick Actions -->
+        <div class="bg-white border border-slate-200 rounded-lg shadow-sm">
+          <div class="p-4 border-b border-slate-200">
+            <h2 class="text-lg font-semibold">Acciones Rápidas</h2>
+            <p class="text-sm text-slate-500">Gestiona tus PQRS de manera eficiente</p>
+          </div>
+          <div class="p-4 space-y-4">
+            <button class="w-full flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-lg">
+              ➕ Crear Nueva PQRS
+            </button>
+
+            <button class="w-full flex items-center border border-slate-300 px-4 py-2 rounded-lg text-lg hover:bg-slate-50">
+              🔍 Buscar PQRS Existente
+            </button>
+
+            <button class="w-full flex items-center border border-slate-300 px-4 py-2 rounded-lg text-lg hover:bg-slate-50">
+              📊 Ver Estadísticas
+            </button>
+
+            <button class="w-full flex items-center border border-slate-300 px-4 py-2 rounded-lg text-lg hover:bg-slate-50">
+              ⚠️ PQRS Pendientes
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla de Usuarios -->
+      <div class="bg-white border border-slate-200 rounded-lg shadow-sm mt-6">
+        <div class="p-4 border-b border-slate-200">
+          <h2 class="text-lg font-semibold">Lista de Usuarios</h2>
+        </div>
+        <div class="p-4">
+          <table class="min-w-full border border-slate-200">
+            <thead>
+              <tr class="bg-slate-100">
+                <th class="border border-slate-300 px-4 py-2">Nombre</th>
+                <th class="border border-slate-300 px-4 py-2">Email</th>
+                <th class="border border-slate-300 px-4 py-2">Rol</th>
+                <th class="border border-slate-300 px-4 py-2">Fecha de Registro</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="border border-slate-300 px-4 py-2">Juan Pérez</td>
+                <td class="border border-slate-300 px-4 py-2">juan.perez@example.com</td>
+                <td class="border border-slate-300 px-4 py-2">Administrador</td>
+                <td class="border border-slate-300 px-4 py-2">01/01/2023</td>
+              </tr>
+              <tr>
+                <td class="border border-slate-300 px-4 py-2">María López</td>
+                <td class="border border-slate-300 px-4 py-2">maria.lopez@example.com</td>
+                <td class="border border-slate-300 px-4 py-2">Usuario</td>
+                <td class="border border-slate-300 px-4 py-2">15/02/2023</td>
+              </tr>
+              <tr>
+                <td class="border border-slate-300 px-4 py-2">Carlos García</td>
+                <td class="border border-slate-300 px-4 py-2">carlos.garcia@example.com</td>
+                <td class="border border-slate-300 px-4 py-2">Usuario</td>
+                <td class="border border-slate-300 px-4 py-2">20/03/2023</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+</body>
+</html>
+
