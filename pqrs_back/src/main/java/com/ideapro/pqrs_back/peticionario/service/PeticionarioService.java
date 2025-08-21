@@ -25,9 +25,11 @@ public class PeticionarioService {
     public Peticionario obtenerPeticionario(Long id) {
         return peticionarioRepository.findById(id).orElse(null);
     }
+
     public void eliminarPeticionario(Long id) {
         peticionarioRepository.deleteById(id);
     }
+
     public Peticionario actualizarPeticionario(Long id, Peticionario peticionario) {
         if (peticionarioRepository.existsById(id)) {
             peticionario.setId(id);
@@ -35,5 +37,6 @@ public class PeticionarioService {
         }
         return null; // O lanzar una excepción si no se encuentra el ID
     }
+
 
 }

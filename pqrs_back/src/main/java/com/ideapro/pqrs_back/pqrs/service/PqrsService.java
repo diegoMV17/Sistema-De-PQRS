@@ -5,19 +5,25 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
+import com.ideapro.pqrs_back.peticionario.model.Peticionario;
+import com.ideapro.pqrs_back.peticionario.repository.PeticionarioRepository;
 import com.ideapro.pqrs_back.pqrs.model.Pqrs;
 import com.ideapro.pqrs_back.pqrs.repository.PqrsRepository;
 
+import jakarta.transaction.Transactional;
 import jakarta.persistence.EntityNotFoundException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class PqrsService {
 
     @Autowired
     private PqrsRepository pqrsRepository;
+
+    @Autowired
+    private PeticionarioRepository peticionarioRepository;
 
     public Pqrs crearPqrs(Pqrs pqrs) {
         // Fecha automática

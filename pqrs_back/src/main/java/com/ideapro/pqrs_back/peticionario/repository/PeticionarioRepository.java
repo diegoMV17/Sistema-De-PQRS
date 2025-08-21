@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
+
 public interface PeticionarioRepository extends JpaRepository<Peticionario, Long> {
 
     // Buscar un único peticionario por número de documento

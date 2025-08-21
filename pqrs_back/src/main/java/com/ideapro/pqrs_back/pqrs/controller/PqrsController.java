@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import com.ideapro.pqrs_back.peticionario.model.Peticionario;
 import com.ideapro.pqrs_back.pqrs.model.Pqrs;
-
 import com.ideapro.pqrs_back.pqrs.service.PqrsService;
 
 import jakarta.validation.Valid;
@@ -60,6 +59,7 @@ public class PqrsController {
         return ResponseEntity.status(201).body(nuevaPqrs);
     }
 
+    // SOLO ADMIN
     @GetMapping
     public ResponseEntity<List<Pqrs>> listarPqrs() {
         List<Pqrs> lista = pqrsService.listarPqrs();
@@ -76,6 +76,7 @@ public class PqrsController {
                        .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    // PUBLICO
     @GetMapping("/buscarPorRadicado/{numeroRadicado}")
     public ResponseEntity<List<Pqrs>> buscarPorNumeroRadicado(@PathVariable String numeroRadicado) {
         List<Pqrs> resultados = pqrsService.buscarPorNumeroRadicado(numeroRadicado);
@@ -83,5 +84,11 @@ public class PqrsController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(resultados);
+    }
+
+    // SOLO ADMIN
+    @PostMapping("/eliminar/{id}")
+    public void eliminarPqrs(@PathVariable Long id) {
+        pqrsService.eliminarPqrs(id);
     }
 }
