@@ -38,7 +38,5 @@ public class PeticionarioService {
         return null; // O lanzar una excepción si no se encuentra el ID
     }
 
-    public List<Peticionario> buscarPorDocumento(String documento) {
-        return peticionarioRepository.findByDocumento(documento);
-    }
+
 }
