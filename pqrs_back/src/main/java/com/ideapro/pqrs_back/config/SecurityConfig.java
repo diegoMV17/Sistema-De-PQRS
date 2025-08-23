@@ -41,6 +41,7 @@ public class SecurityConfig {
                 .requestMatchers("/formulario").permitAll()
                 .requestMatchers("/consultar").permitAll()
                 .requestMatchers("/dashboard").permitAll()
+                .requestMatchers("/login").permitAll()
                 .requestMatchers("/api/peticionarios").permitAll()
                 .requestMatchers("/api/pqrs").permitAll()
                 .anyRequest().authenticated()

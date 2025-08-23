@@ -23,21 +23,27 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        try {
-            ResponseEntity<String> result = authService.login(request.getEmail(), request.getContrasena());
-            if (result.getStatusCode() == HttpStatus.OK) {
-                return ResponseEntity.ok(Map.of(
-                        "token", result.getBody(),
-                        "message", "Login exitoso"));
-            }
-            return result;
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Error interno del servidor"));
+@PostMapping("/login")
+public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    try {
+        String token = authService.login(request.getEmail(), request.getContrasena());
+
+        if (token != null) {
+            return ResponseEntity.ok(Map.of(
+                    "token", token,
+                    "message", "Login exitoso"));
         }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("error", "Credenciales inválidas"));
+
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Error interno del servidor"));
     }
+}
+
+
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {

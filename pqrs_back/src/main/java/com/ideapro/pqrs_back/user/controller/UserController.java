@@ -17,47 +17,50 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    // Solo ADMIN puede crear usuarios
     @PostMapping
-    @PreAuthorize("hasAuthority(ADMIN)")
+    @PreAuthorize("hasRole('ADMIN')")
     public User crearUser(@RequestBody User user) {
         return userService.crearUser(user);
     }
 
+    // Solo ADMIN puede listar usuarios
     @GetMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<User> listarUser() {
         return userService.listarUser();
     }
 
+    // Solo ADMIN puede consultar usuarios por ID
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public User obtenerUser(@PathVariable Long id) {
         return userService.obtenerUser(id);
     }
 
+    // Solo ADMIN puede eliminar
     @DeleteMapping("/eliminar/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> eliminarUser(@PathVariable Long id) {
         userService.eliminarUser(id);
         return ResponseEntity.ok("Usuario eliminado correctamente.");
     }
 
+    // Buscar por email (abierto a todos, puede ser útil en login/consultas)
     @GetMapping("/buscarPorEmail/{email}")
     public List<User> buscarEmail(@PathVariable String email) {
         return userService.buscarEmail(email);
     }
 
-       //NO NECESITA AUTORIZACION
+    // Registro de usuario (ABIERTO, sin autorización)
     @PostMapping("/register")
-    @PreAuthorize("hasAuthority('ADMIN')")
     public User register(@RequestBody User user) {
         return userService.register(user);
     }
 
-       //NO NECESITA AUTORIZACION
+    // Login de usuario (ABIERTO)
     @PostMapping("/login")
     public User login(@RequestBody User user) {
         return userService.login(user.getCredencial(), user.getContrasena());
     }
-
 }
