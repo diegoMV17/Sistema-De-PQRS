@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .requestMatchers("/error").permitAll()
                 .requestMatchers("/").permitAll()
                 .requestMatchers("/formulario").permitAll()
-                .requestMatchers("/login").permitAll()
+                .requestMatchers("/consultar").permitAll()
                 .requestMatchers("/dashboard").permitAll()
                 .requestMatchers("/api/peticionarios").permitAll()
                 .requestMatchers("/api/pqrs").permitAll()

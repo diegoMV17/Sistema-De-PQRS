@@ -53,4 +53,10 @@ public class HomeController {
         model.addAttribute("currentPage", "formulario");
         return "formulario";
     }
+
+    @GetMapping("/consultar")
+    public String consultar(Model model) {
+        model.addAttribute("currentPage", "consultar");
+        return "consultar";
+    }
 }
