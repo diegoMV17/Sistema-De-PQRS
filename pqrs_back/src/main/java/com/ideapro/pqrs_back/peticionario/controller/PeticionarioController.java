@@ -3,9 +3,6 @@ package com.ideapro.pqrs_back.peticionario.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import com.ideapro.pqrs_back.peticionario.model.Peticionario;
@@ -17,43 +14,39 @@ public class PeticionarioController {
 
     @Autowired
     private PeticionarioService peticionarioService;
-
-    // NO NECESITA AUTORIZACION
+    
+    // Crear un nuevo Peticionario
     @PostMapping
     public Peticionario crearPeticionario(@RequestBody Peticionario peticionario) {
         return peticionarioService.crearPeticionario(peticionario);
     }
 
-    // SOLO ADMIN
+    // Listar todos los Peticionarios
     @GetMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public List<Peticionario> listarPeticionario() {
+    public List<Peticionario> listarPeticionarios() {
         return peticionarioService.listarPeticionario();
     }
 
-
-    @PreAuthorize("hasAuthority('ADMIN')")
+    // Buscar por ID
     @GetMapping("/{id}")
     public Peticionario obtenerPeticionario(@PathVariable Long id) {
         return peticionarioService.obtenerPeticionario(id);
     }
 
-    // SOLO ADMIN
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping("/eliminar/{id}")
+    // Eliminar por ID
+    @DeleteMapping("/{id}")
     public void eliminarPeticionario(@PathVariable Long id) {
         peticionarioService.eliminarPeticionario(id);
     }
-    // SOLO ADMIN
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping("/actualizar/{id}")
+
+    // Actualizar por ID
+    @PutMapping("/{id}")
     public Peticionario actualizarPeticionario(@PathVariable Long id, @RequestBody Peticionario peticionario) {
         return peticionarioService.actualizarPeticionario(id, peticionario);
     }
 
-    // PUBLICO
-    @GetMapping("/buscarPorDocumento/{documento}")
-    public List<Peticionario> buscarPorDocumento(@PathVariable String documento) {
-        return peticionarioService.buscarPorDocumento(documento);
-    }
+    // Buscar por documento
+ 
+
+
 }

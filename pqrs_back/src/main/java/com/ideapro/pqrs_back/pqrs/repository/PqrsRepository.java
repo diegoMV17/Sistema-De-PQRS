@@ -1,3 +1,7 @@
+/**
+ * Repositorio para las PQRS (Peticiones, Quejas, Reclamos y Sugerencias)
+ */
+
 package com.ideapro.pqrs_back.pqrs.repository;
 
 import java.util.List;
