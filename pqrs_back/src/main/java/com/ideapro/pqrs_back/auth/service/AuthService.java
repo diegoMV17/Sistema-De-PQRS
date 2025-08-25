@@ -1,7 +1,6 @@
 package com.ideapro.pqrs_back.auth.service;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,29 +13,25 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    
+
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public ResponseEntity<String> login(String email, String contrasena) {
+    public String login(String email, String contrasena) {
         var users = userRepository.findByEmail(email);
         if (users.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Usuario no encontrado");
+            throw new RuntimeException("Usuario no encontrado");
         }
         var user = users.get(0);
 
         if (!passwordEncoder.matches(contrasena, user.getContrasena())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Contraseña incorrecta");
+            throw new RuntimeException("Contraseña incorrecta");
         }
 
-        String token = jwtUtil.generateToken(user.getCredencial(), user.getRol());
-        return ResponseEntity.ok(token);
+        // 🔑 Generar el token JWT
+        return jwtUtil.generateToken(user.getEmail(), user.getRol());
     }
-
-
 
     public User register(String nombre, String apellido, String credencial,
             String email, String contrasena, String rol) {
@@ -45,6 +40,7 @@ public class AuthService {
         if (!userRepository.findByEmail(email).isEmpty()) {
             throw new RuntimeException("El email ya está registrado");
         }
+
         // Validar que la credencial no exista
         if (userRepository.findByCredencial(credencial) != null) {
             throw new RuntimeException("La credencial ya está registrada");
@@ -55,12 +51,9 @@ public class AuthService {
         newUser.setApellido(apellido);
         newUser.setCredencial(credencial);
         newUser.setEmail(email);
-        newUser.setContrasena(passwordEncoder.encode(contrasena)); // Encriptar password
+        newUser.setContrasena(passwordEncoder.encode(contrasena)); // 🔒 Encriptar password
         newUser.setRol(rol.toUpperCase()); // Asegurar mayúsculas
 
         return userRepository.save(newUser);
     }
-
-   
-
 }

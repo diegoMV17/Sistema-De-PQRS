@@ -7,13 +7,13 @@ import javax.crypto.SecretKey;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtUtil {
-    private static final String SECRET_STRING = "my_super_secret_key_1234567890123456"; // mínimo 32 caracteres
+    private static final String SECRET_STRING = "s3cr3tKeyTh@tIs256BitsLongAndM@keSure1"; // mínimo 32 caracteres
     private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(SECRET_STRING.getBytes());
 
     public String generateToken(String username, String role) {
@@ -21,8 +21,8 @@ public class JwtUtil {
                 .setSubject(username)
                 .claim("role", role)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 8)) // 8 horas
-                .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 8))
+                .signWith(SECRET_KEY)
                 .compact();
     }
 

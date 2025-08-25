@@ -14,28 +14,43 @@ public class PeticionarioService {
     @Autowired
     private PeticionarioRepository peticionarioRepository;
 
+    // Crear un nuevo Peticionario
     public Peticionario crearPeticionario(Peticionario peticionario) {
         return peticionarioRepository.save(peticionario);
     }
 
+    // Listar todos
     public List<Peticionario> listarPeticionario() {
         return peticionarioRepository.findAll();
     }
 
+    // Buscar por ID
     public Peticionario obtenerPeticionario(Long id) {
         return peticionarioRepository.findById(id).orElse(null);
     }
+
+    // Eliminar por ID
     public void eliminarPeticionario(Long id) {
         peticionarioRepository.deleteById(id);
     }
+
+    // Actualizar por ID
     public Peticionario actualizarPeticionario(Long id, Peticionario peticionario) {
         if (peticionarioRepository.existsById(id)) {
             peticionario.setId(id);
             return peticionarioRepository.save(peticionario);
         }
-        return null; // O lanzar una excepción si no se encuentra el ID
+        return null; // O lanzar excepción
     }
-    public List<Peticionario> buscarPorDocumento(String documento) {
-        return peticionarioRepository.findByDocumento(documento);
+
+    // Buscar por número de documento
+    public Peticionario buscarPorDocumento(String numeroDocumento) {
+        return peticionarioRepository.findByNumeroDocumento(numeroDocumento)
+                                     .orElse(null);
+    }
+
+    // Buscar por nombre o apellido
+    public List<Peticionario> buscarPorNombreOApellido(String criterio) {
+        return peticionarioRepository.findByNombresContainingIgnoreCaseOrApellidosContainingIgnoreCase(criterio, criterio);
     }
 }

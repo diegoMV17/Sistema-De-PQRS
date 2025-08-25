@@ -4,29 +4,48 @@ import java.time.LocalDateTime;
 
 import com.ideapro.pqrs_back.peticionario.model.Peticionario;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import lombok.Data;
+import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
-@Table(name = "pqrs")
-@Data
 public class Pqrs {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
     private String tipo;
+
+    @NotBlank
+    @Column(length = 2000)
     private String descripcion;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "peticionario_id", referencedColumnName = "id")
+    @Valid
+    private Peticionario peticionario; // <-- Variable faltante
+
     private LocalDateTime fechaRegistro;
     private String numeroRadicado;
 
-    @ManyToOne
-    @JoinColumn(name = "peticionario_id")
-    private Peticionario peticionario;
+    // Getters y Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getTipo() { return tipo; }
+    public void setTipo(String tipo) { this.tipo = tipo; }
+
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+
+    public Peticionario getPeticionario() { return peticionario; }
+    public void setPeticionario(Peticionario peticionario) { this.peticionario = peticionario; }
+
+    public LocalDateTime getFechaRegistro() { return fechaRegistro; }
+    public void setFechaRegistro(LocalDateTime fechaRegistro) { this.fechaRegistro = fechaRegistro; }
+
+    public String getNumeroRadicado() { return numeroRadicado; }
+    public void setNumeroRadicado(String numeroRadicado) { this.numeroRadicado = numeroRadicado; }
 }

@@ -122,12 +122,8 @@
     <!-- Footer Container -->
     <div id="footer-container"></div>
 
-    <!-- Scripts -->
-    <script src="navbar.js"></script>
-    <script src="footer.js"></script>
-    <script>
- <script>
     
+<script>
     // Toggle password visibility
     document.getElementById('togglePassword').addEventListener('click', function() {
         const password = document.getElementById('password');
@@ -165,21 +161,22 @@
         loginSpinner.classList.remove('hidden');
 
         try {
-            const response = await fetch('../auth/login', {
+            const response = await fetch('/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    credencial: email,
+                    email: email,
                     contrasena: password
                 })
             });
 
             if (response.ok) {
                 const data = await response.json();
-                // Guardamos token o datos de usuario si tu API los devuelve
                 localStorage.setItem('token', data.token || '');
                 localStorage.setItem('userEmail', email);
-                window.location.href = 'index.html';
+
+                // 👇 Redirigir al Dashboard
+                window.location.href = 'dashboard';
             } else if(response.status === 401) {
                 errorMessage.textContent = 'Credenciales incorrectas';
                 errorMessage.classList.remove('hidden');
@@ -198,6 +195,7 @@
         }
     });
 </script>
+
 
     <div th:replace="~{fragments/footer :: footer}"></div>
 </body>

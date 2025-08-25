@@ -3,6 +3,8 @@ package com.ideapro.pqrs_back.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -10,10 +12,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.ideapro.pqrs_back.auth.security.JwtFilter;
 
+
 import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
@@ -21,39 +25,37 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+
             .csrf(csrf -> csrf.disable())
-
-            // Política de sesión sin estado (JWT)
+            
+            // ← AGREGAR CONFIGURACIÓN DE SESIONES
             .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            
             .authorizeHttpRequests(auth -> auth
-                // Rutas públicas (controladores y recursos estáticos)
-                .requestMatchers(
-                    "/auth/**",      // Login, registro vía API
-                    "/error",        // Página de error
-                    "/",             // Página principal
-                    "/login",        // Vista login
-                    "/register",     // Vista registro
-                    "/dashboard",    // Vista dashboard
-                    "/formulario",   // Vista formulario
-                    "/css/**",       // Archivos CSS
-                    "/js/**",        // Archivos JS
-                    "/images/**"     // Imágenes
-                ).permitAll()
-
-                // El resto requiere autenticación
+                // ← CAMBIAR ESTAS RUTAS POR LAS QUE REALMENTE TIENES
+                .requestMatchers("/auth/**").permitAll()  // Para /auth/login y /auth/register
+                .requestMatchers("/error").permitAll()
+                .requestMatchers("/").permitAll()
+                .requestMatchers("/formulario").permitAll()
+                .requestMatchers("/consultar").permitAll()
+                .requestMatchers("/dashboard").permitAll()
+                .requestMatchers("/login").permitAll()
+                .requestMatchers("/api/peticionarios").permitAll()
+                .requestMatchers("/api/pqrs").permitAll()
                 .anyRequest().authenticated()
             )
 
             // Filtro JWT antes del filtro de autenticación por usuario/contraseña
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
+
         return http.build();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        return http.getSharedObject(AuthenticationManager.class);
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
     }
 }
