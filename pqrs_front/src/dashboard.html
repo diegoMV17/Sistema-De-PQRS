@@ -107,39 +107,37 @@
       <!-- Tabla de Usuarios -->
       <div class="bg-white border border-slate-200 rounded-lg shadow-sm mt-6">
         <div class="p-4 border-b border-slate-200">
-          <h2 class="text-lg font-semibold">Lista de Usuarios</h2>
+          <h2 class="text-lg font-semibold">Lista de solicitudes</h2>
         </div>
         <div class="p-4">
-          <table class="min-w-full border border-slate-200">
-            <thead>
-              <tr class="bg-slate-100">
-                <th class="border border-slate-300 px-4 py-2">Nombre</th>
-                <th class="border border-slate-300 px-4 py-2">Email</th>
-                <th class="border border-slate-300 px-4 py-2">Rol</th>
-                <th class="border border-slate-300 px-4 py-2">Fecha de Registro</th>
+         <table class="min-w-full border-collapse border border-slate-200">
+            <thead class="bg-slate-100">
+              <tr class="text-left text-sm font-semibold text-gray-600">
+                <th class="border-b border-slate-300 px-6 py-3">Tipo de Solicitud</th>
+                <th class="border-b border-slate-300 px-6 py-3">Estado de Solicitud</th>
+                <th class="border-b border-slate-300 px-6 py-3">Descripción</th>
+                <th class="border-b border-slate-300 px-6 py-3">Documento</th>
+                <th class="border-b border-slate-300 px-6 py-3">Fecha de Radicación</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td class="border border-slate-300 px-4 py-2">Juan Pérez</td>
-                <td class="border border-slate-300 px-4 py-2">juan.perez@example.com</td>
-                <td class="border border-slate-300 px-4 py-2">Administrador</td>
-                <td class="border border-slate-300 px-4 py-2">01/01/2023</td>
+            <tbody class="text-sm text-gray-600">
+              <tr class="hover:bg-slate-50 transition-colors duration-300">
+                <td class="border-b border-slate-200 px-6 py-3">Ejemplo Tipo</td>
+                <td class="border-b border-slate-200 px-6 py-3">Aprobado</td>
+                <td class="border-b border-slate-200 px-6 py-3">Descripción breve aquí.</td>
+                <td class="border-b border-slate-200 px-6 py-3">Documentos.pdf</td>
+                <td class="border-b border-slate-200 px-6 py-3">01/01/2025</td>
               </tr>
-              <tr>
-                <td class="border border-slate-300 px-4 py-2">María López</td>
-                <td class="border border-slate-300 px-4 py-2">maria.lopez@example.com</td>
-                <td class="border border-slate-300 px-4 py-2">Usuario</td>
-                <td class="border border-slate-300 px-4 py-2">15/02/2023</td>
-              </tr>
-              <tr>
-                <td class="border border-slate-300 px-4 py-2">Carlos García</td>
-                <td class="border border-slate-300 px-4 py-2">carlos.garcia@example.com</td>
-                <td class="border border-slate-300 px-4 py-2">Usuario</td>
-                <td class="border border-slate-300 px-4 py-2">20/03/2023</td>
+              <tr class="hover:bg-slate-50 transition-colors duration-300">
+                <td class="border-b border-slate-200 px-6 py-3">Solicitud tipo B</td>
+                <td class="border-b border-slate-200 px-6 py-3">Pendiente</td>
+                <td class="border-b border-slate-200 px-6 py-3">Otro tipo de solicitud.</td>
+                <td class="border-b border-slate-200 px-6 py-3">SolicitudB.pdf</td>
+                <td class="border-b border-slate-200 px-6 py-3">05/05/2025</td>
               </tr>
             </tbody>
           </table>
+
         </div>
       </div>
     </main>
