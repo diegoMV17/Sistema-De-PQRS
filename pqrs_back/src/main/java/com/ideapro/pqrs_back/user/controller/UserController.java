@@ -19,14 +19,14 @@ public class UserController {
 
     // Solo ADMIN puede crear usuarios
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public User crearUser(@RequestBody User user) {
         return userService.crearUser(user);
     }
 
     // Solo ADMIN puede listar usuarios
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public List<User> listarUser() {
         return userService.listarUser();
     }
