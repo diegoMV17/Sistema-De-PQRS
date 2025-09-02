@@ -26,14 +26,16 @@ public class PqrsService {
         // Genera radicado
         pqrs.setNumeroRadicado(generarRadicado());
 
+        // Estado inicial
+        pqrs.setEstado("Pendiente");
+
         return pqrsRepository.save(pqrs);
     }
 
     private String generarRadicado() {
         String prefijo = "PQRS-NUM-";
         String consecutivo = String.format("%07d",
-                ThreadLocalRandom.current().nextInt(1, 9_999_999)
-        );
+                ThreadLocalRandom.current().nextInt(1, 9_999_999));
         String anio = String.valueOf(LocalDate.now().getYear());
         return prefijo + consecutivo + "-" + anio;
     }
@@ -56,5 +58,24 @@ public class PqrsService {
 
     public List<Pqrs> buscarPorNumeroRadicado(String numeroRadicado) {
         return pqrsRepository.findByNumeroRadicado(numeroRadicado);
+    }
+
+    public long contarPqrs() {
+        return pqrsRepository.count();
+    }
+
+    // Nuevo método para obtener el estado de una PQRS por su ID
+    public String obtenerEstadoPqrs(Long id) {
+        return pqrsRepository.findEstadoById(id)
+                .orElseThrow(() -> new EntityNotFoundException("PQRS no encontrada con id: " + id));
+    }
+    // Nuevo método para listar PQRS por estado
+    public List<Pqrs> listarPqrsPorEstado(String estado) {
+        return pqrsRepository.findByEstado(estado);
+    }
+    // Metodo para traer los estados de las pqrs por numero de radicado
+    public String obtenerEstadoPorRadicado(String numeroRadicado) {
+        return pqrsRepository.findEstadoByNumeroRadicado(numeroRadicado)
+                .orElseThrow(() -> new EntityNotFoundException("PQRS no encontrada con numero de radicado: " + numeroRadicado));
     }
 }

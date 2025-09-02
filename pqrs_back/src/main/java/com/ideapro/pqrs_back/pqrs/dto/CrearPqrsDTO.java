@@ -15,5 +15,5 @@ public class CrearPqrsDTO {
     private String documento;
     private String telefono;
     private String email;
-    private String direccion;
+    private String estado;
 }

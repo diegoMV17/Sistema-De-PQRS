@@ -29,6 +29,7 @@ public class Pqrs {
 
     private LocalDateTime fechaRegistro;
     private String numeroRadicado;
+    private String estado;
 
     // Getters y Setters
     public Long getId() { return id; }
@@ -48,4 +49,7 @@ public class Pqrs {
 
     public String getNumeroRadicado() { return numeroRadicado; }
     public void setNumeroRadicado(String numeroRadicado) { this.numeroRadicado = numeroRadicado; }
+    
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
 }
