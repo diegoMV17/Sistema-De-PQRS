@@ -45,8 +45,25 @@ public class PeticionarioController {
         return peticionarioService.actualizarPeticionario(id, peticionario);
     }
 
-    // Buscar por documento
- 
+    // Buscar por número de documento
+    @GetMapping("/buscar/documento/{numeroDocumento}")
+    public Peticionario buscarPorDocumento(@PathVariable String numeroDocumento) {
+        return peticionarioService.buscarPorDocumento(numeroDocumento);
+    }
 
+    // Buscar por número de documento o email
+    @GetMapping("/buscar")
+    public Peticionario buscarPorDocumentoOEmail(
+            @RequestParam(required = false) String numeroDocumento,
+            @RequestParam(required = false) String email) {
+        return peticionarioService.buscarPorNumeroDocumentoOEmail(numeroDocumento, email);
+    }
 
+    // Búsqueda flexible por nombre o apellido
+    @GetMapping("/buscar/nombre")
+    public List<Peticionario> buscarPorNombreOApellido(
+            @RequestParam String nombres,
+            @RequestParam String apellidos) {
+        return peticionarioService.buscarPorNombresOApellidos(nombres, apellidos);
+    }
 }

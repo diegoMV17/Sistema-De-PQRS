@@ -12,7 +12,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.ideapro.pqrs_back.auth.security.JwtFilter;
 
-
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -26,30 +25,23 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
 
-            .csrf(csrf -> csrf.disable())
-            
-            // ← AGREGAR CONFIGURACIÓN DE SESIONES
-            .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
-            
-            .authorizeHttpRequests(auth -> auth
-                // ← CAMBIAR ESTAS RUTAS POR LAS QUE REALMENTE TIENES
-                .requestMatchers("/auth/**").permitAll()  // Para /auth/login y /auth/register
-                .requestMatchers("/error").permitAll()
-                .requestMatchers("/").permitAll()
-                .requestMatchers("/formulario").permitAll()
-                .requestMatchers("/consultar").permitAll()
-                .requestMatchers("/dashboard").permitAll()
-                .requestMatchers("/login").permitAll()
-                .requestMatchers("/api/peticionarios").permitAll()
-                .requestMatchers("/api/pqrs").permitAll()
-                .anyRequest().authenticated()
-            )
+                .csrf(csrf -> csrf.disable())
 
-            // Filtro JWT antes del filtro de autenticación por usuario/contraseña
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                // ← AGREGAR CONFIGURACIÓN DE SESIONES
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/error").permitAll()
+                        .requestMatchers("/", "/formulario", "/consultar", "/dashboard", "/login", "/reportes")
+                        .permitAll()
+                        .requestMatchers("/api/pqrs/**").permitAll()
+                        .requestMatchers("/api/peticionarios").permitAll()
+                        .anyRequest().authenticated())
+
+                // Filtro JWT antes del filtro de autenticación por usuario/contraseña
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

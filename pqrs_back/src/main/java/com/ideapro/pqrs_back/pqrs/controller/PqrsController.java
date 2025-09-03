@@ -1,4 +1,7 @@
-
+/**
+ * Controlador para las PQRS (Peticiones, Quejas, Reclamos y Sugerencias)
+ * pqrs/controller/PqrsController.java
+ */
 package com.ideapro.pqrs_back.pqrs.controller;
 
 import java.util.List;
@@ -8,15 +11,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.ideapro.pqrs_back.peticionario.model.Peticionario;
 import com.ideapro.pqrs_back.pqrs.model.Pqrs;
 import com.ideapro.pqrs_back.pqrs.service.PqrsService;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 
+@SuppressWarnings("unused")
 @RestController
 @RequestMapping("/api/pqrs")
 public class PqrsController {
@@ -26,14 +30,13 @@ public class PqrsController {
     @Autowired
     private PqrsService pqrsService;
 
+    // Crear PQRS
     @PostMapping
     public ResponseEntity<Pqrs> crearPqrs(@Valid @RequestBody Pqrs pqrs) {
-        // Validar que peticionario no sea null
         if (pqrs.getPeticionario() == null) {
             pqrs.setPeticionario(new Peticionario());
         }
 
-        // Asegurarse de que los campos críticos no estén null
         Peticionario pet = pqrs.getPeticionario();
         if (pet.getApellidos() == null)
             pet.setApellidos("");
@@ -51,20 +54,10 @@ public class PqrsController {
         Pqrs nuevaPqrs = pqrsService.crearPqrs(pqrs);
         logger.info("PQRS creada con ID {}", nuevaPqrs.getId());
 
-        // Notificación a n8n solo si existe peticionario
-        if (nuevaPqrs.getPeticionario() != null) {
-            try {
-                // Webhook temporalmente desactivado
-                logger.info("Notificación enviada al webhook para PQRS ID {}", nuevaPqrs.getId());
-            } catch (Exception e) {
-                logger.error("Error al notificar al webhook para PQRS ID {}: {}", nuevaPqrs.getId(), e.getMessage());
-            }
-        }
-
         return ResponseEntity.status(201).body(nuevaPqrs);
     }
 
-    // SOLO ADMIN
+    // Listar todas las PQRS
     @GetMapping
     public ResponseEntity<List<Pqrs>> listarPqrs() {
         List<Pqrs> lista = pqrsService.listarPqrs();
@@ -74,6 +67,7 @@ public class PqrsController {
         return ResponseEntity.ok(lista);
     }
 
+    // Obtener una PQRS por ID
     @GetMapping("/{id}")
     public ResponseEntity<Pqrs> obtenerPqrs(@PathVariable Long id) {
         return Optional.ofNullable(pqrsService.obtenerPqrs(id))
@@ -81,7 +75,7 @@ public class PqrsController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // PUBLICO
+    // Buscar PQRS por número de radicado
     @GetMapping("/buscarPorRadicado/{numeroRadicado}")
     public ResponseEntity<List<Pqrs>> buscarPorNumeroRadicado(@PathVariable String numeroRadicado) {
         List<Pqrs> resultados = pqrsService.buscarPorNumeroRadicado(numeroRadicado);
@@ -91,26 +85,35 @@ public class PqrsController {
         return ResponseEntity.ok(resultados);
     }
 
-    // SOLO ADMIN
-    @PostMapping("/eliminar/{id}")
-    public void eliminarPqrs(@PathVariable Long id) {
+    // Eliminar PQRS
+    @DeleteMapping("/eliminar/{id}")
+    public ResponseEntity<Void> eliminarPqrs(@PathVariable Long id) {
         pqrsService.eliminarPqrs(id);
+        return ResponseEntity.noContent().build();
     }
 
+    // Contar total de PQRS
     @GetMapping("/total")
     public ResponseEntity<Long> obtenerTotalPqrs() {
         long total = pqrsService.contarPqrs();
         return ResponseEntity.ok(total);
     }
 
-    // Nuevo endpoint para obtener el estado de una PQRS por su ID
+    // Obtener estado de una PQRS por su ID
     @GetMapping("/estado/{id}")
     public ResponseEntity<String> obtenerEstadoPqrs(@PathVariable Long id) {
-        String estado = pqrsService.obtenerEstadoPqrs(id);
+        String estado = pqrsService.obtenerEstadoPqrs(id).getNombre();
         return ResponseEntity.ok(estado);
     }
 
-    // Nuevo endpoint para listar PQRS por estado
+    // Obtener estado de una PQRS por número de radicado
+    @GetMapping("/estado/radicado/{numeroRadicado}")
+    public ResponseEntity<String> obtenerEstadoPorRadicado(@PathVariable String numeroRadicado) {
+        String estado = pqrsService.obtenerEstadoPorRadicado(numeroRadicado).getNombre();
+        return ResponseEntity.ok(estado);
+    }
+
+    // Listar PQRS por estado
     @GetMapping("/porEstado/{estado}")
     public ResponseEntity<List<Pqrs>> listarPqrsPorEstado(@PathVariable String estado) {
         List<Pqrs> lista = pqrsService.listarPqrsPorEstado(estado);
@@ -120,11 +123,4 @@ public class PqrsController {
         return ResponseEntity.ok(lista);
     }
 
-    //endpoint para traer el estado de una pqrs por numero de radicado
-    // todos lo pueden ver
-    @GetMapping("/estadoRadicado/{numeroRadicado}")
-    public ResponseEntity<String> obtenerEstadoPorRadicado(@PathVariable String numeroRadicado){
-        String estado = pqrsService.obtenerEstadoPorRadicado(numeroRadicado);
-        return ResponseEntity.ok(estado);
-    }
 }

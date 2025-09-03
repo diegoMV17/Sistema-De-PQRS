@@ -59,4 +59,10 @@ public class HomeController {
         model.addAttribute("currentPage", "consultar");
         return "consultar";
     }
+
+    @GetMapping("/reportes")
+    public String reportes(Model model) {
+        model.addAttribute("currentPage", "reportes");
+        return "reportes";
+    }
 }

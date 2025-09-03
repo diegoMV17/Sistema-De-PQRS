@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-
 public interface PeticionarioRepository extends JpaRepository<Peticionario, Long> {
 
     // Buscar un único peticionario por número de documento
@@ -15,4 +14,6 @@ public interface PeticionarioRepository extends JpaRepository<Peticionario, Long
     // Buscar por nombre o apellido (ejemplo flexible)
     List<Peticionario> findByNombresContainingIgnoreCaseOrApellidosContainingIgnoreCase(String nombres, String apellidos);
 
+    // Buscar por número de documento o email
+    Optional<Peticionario> findByNumeroDocumentoOrEmail(String numeroDocumento, String email);
 }

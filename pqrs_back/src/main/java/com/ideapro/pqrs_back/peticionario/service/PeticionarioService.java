@@ -53,4 +53,14 @@ public class PeticionarioService {
     public List<Peticionario> buscarPorNombreOApellido(String criterio) {
         return peticionarioRepository.findByNombresContainingIgnoreCaseOrApellidosContainingIgnoreCase(criterio, criterio);
     }
+
+    public Peticionario buscarPorNumeroDocumentoOEmail(String numeroDocumento, String email) {
+       
+        throw new UnsupportedOperationException("Unimplemented method 'buscarPorNumeroDocumentoOEmail'");
+    }
+
+    public List<Peticionario> buscarPorNombresOApellidos(String nombres, String apellidos) {
+       
+        throw new UnsupportedOperationException("Unimplemented method 'buscarPorNombresOApellidos'");
+    }
 }

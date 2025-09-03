@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema PQRS - Reportes</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-gray-50 flex flex-col min-h-screen">
@@ -16,26 +15,14 @@
       <div class="text-xl font-semibold text-white">
         Sistema <span class="text-blue-400">PQRS</span>
       </div>
-
       <div class="flex items-center gap-4">
-        <!-- Notificaciones -->
-        <button class="text-slate-300 hover:text-white transition-colors relative">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405C18.21 15.21 18 14.702 18 14V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3c0 .702-.21 1.21-.595 1.595L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-          </svg>
-          <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">3</span>
-        </button>
-
-        <!-- Usuario -->
         <div class="flex items-center gap-2 text-slate-300">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A9 9 0 0112 15a9 9 0 016.879 2.804M15 11a3 3 0 10-6 0 3 3 0 006 0z"></path>
           </svg>
           <span class="hidden md:block">Juan Pérez</span>
         </div>
-
-        <!-- Logout -->
-        <button class="text-slate-300 hover:text-white transition-colors">
+        <button id="logoutBtn" class="text-slate-300 hover:text-white transition-colors">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"></path>
           </svg>
@@ -44,15 +31,14 @@
     </div>
   </nav>
 
-  <!-- Layout -->
   <div class="flex flex-1">
     <!-- Sidebar -->
     <aside class="w-64 bg-white border-r border-gray-200 p-4 hidden md:block">
       <nav class="space-y-2">
-        <a href="#" class="flex items-center p-2 rounded-lg hover:bg-slate-100 text-slate-700">
+        <a href="/dashboard" class="flex items-center p-2 rounded-lg hover:bg-slate-100 text-slate-700">
           🏠 <span class="ml-2">Dashboard</span>
         </a>
-        <a href="#" class="flex items-center p-2 rounded-lg bg-slate-100 text-slate-900 font-medium">
+        <a href="/reportes" class="flex items-center p-2 rounded-lg bg-slate-100 text-slate-900 font-medium">
           📊 <span class="ml-2">Reportes</span>
         </a>
       </nav>
@@ -65,21 +51,28 @@
         <p class="text-gray-500">Análisis estadístico de PQRS</p>
       </header>
 
+      <!-- Barra de búsqueda -->
+      <div class="mb-6 flex">
+        <input 
+          id="searchInput"
+          type="text" 
+          placeholder="Buscar por tipo, estado o radicado..." 
+          class="w-full md:w-1/2 px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+        >
+      </div>
+
       <!-- Grid de gráficos -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Gráfico por tipo de solicitud -->
         <div class="bg-white shadow rounded-xl p-4">
           <h3 class="text-lg font-semibold mb-4">Solicitudes por Tipo</h3>
           <canvas id="chartTipo"></canvas>
         </div>
 
-        <!-- Gráfico por estado -->
         <div class="bg-white shadow rounded-xl p-4">
           <h3 class="text-lg font-semibold mb-4">Estados de Solicitudes</h3>
           <canvas id="chartEstado"></canvas>
         </div>
 
-        <!-- Evolución mensual -->
         <div class="bg-white shadow rounded-xl p-4 col-span-1 md:col-span-2">
           <h3 class="text-lg font-semibold mb-4">Evolución Mensual</h3>
           <canvas id="chartMensual"></canvas>
@@ -88,46 +81,87 @@
     </main>
   </div>
 
-  <!-- Scripts de gráficos -->
   <script>
-    // Gráfico por tipo
-    new Chart(document.getElementById("chartTipo"), {
-      type: "pie",
-      data: {
-        labels: ["Peticiones", "Quejas", "Reclamos", "Sugerencias"],
-        datasets: [{
-          data: [50, 3, 4, 5],
-          backgroundColor: ["#3b82f6", "#f87171", "#facc15", "#34d399"]
-        }]
-      }
+    const logoutBtn = document.getElementById("logoutBtn");
+    logoutBtn.addEventListener("click", () => {
+      localStorage.clear();
+      window.location.href = "/login";
     });
 
-    // Gráfico por estado
-    new Chart(document.getElementById("chartEstado"), {
-      type: "doughnut",
-      data: {
-        labels: ["Pendiente", "En Proceso", "Aprobado", "Rechazado"],
-        datasets: [{
-          data: [10, 5, 8, 2],
-          backgroundColor: ["#fbbf24", "#60a5fa", "#34d399", "#ef4444"]
-        }]
-      }
-    });
+    async function cargarDatos() {
+      try {
+        const res = await fetch("/api/pqrs");
+        const pqrs = await res.json();
 
-    // Gráfico mensual
-    new Chart(document.getElementById("chartMensual"), {
-      type: "line",
-      data: {
-        labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo"],
-        datasets: [{
-          label: "Solicitudes",
-          data: [12, 19, 3, 5, 8],
-          borderColor: "#3b82f6",
-          backgroundColor: "rgba(59, 130, 246, 0.2)",
-          fill: true,
-          tension: 0.3
-        }]
+        // Datos para gráficos
+        const tipoCounts = { PETICION: 0, QUEJA: 0, RECLAMO: 0, SUGERENCIA: 0 };
+        const estadoCounts = {};
+        const mensualCounts = Array(12).fill(0);
+
+        pqrs.forEach(p => {
+          tipoCounts[p.tipo] = (tipoCounts[p.tipo] || 0) + 1;
+
+          const estado = p.estado?.nombre || "Pendiente";
+          estadoCounts[estado] = (estadoCounts[estado] || 0) + 1;
+
+          const mes = new Date(p.fechaRegistro).getMonth();
+          mensualCounts[mes]++;
+        });
+
+        // Chart Tipo
+        new Chart(document.getElementById("chartTipo"), {
+          type: "pie",
+          data: {
+            labels: ["Peticiones","Quejas","Reclamos","Sugerencias"],
+            datasets: [{
+              data: [tipoCounts.PETICION, tipoCounts.QUEJA, tipoCounts.RECLAMO, tipoCounts.SUGERENCIA],
+              backgroundColor: ["#3b82f6", "#f87171", "#facc15", "#34d399"]
+            }]
+          }
+        });
+
+        // Chart Estado
+        new Chart(document.getElementById("chartEstado"), {
+          type: "doughnut",
+          data: {
+            labels: Object.keys(estadoCounts),
+            datasets: [{
+              data: Object.values(estadoCounts),
+              backgroundColor: ["#fbbf24","#60a5fa","#34d399","#ef4444","#a78bfa"]
+            }]
+          }
+        });
+
+        // Chart Evolución mensual
+        new Chart(document.getElementById("chartMensual"), {
+          type: "line",
+          data: {
+            labels: ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Sept","Oct","Nov","Dic"],
+            datasets: [{
+              label: "Solicitudes",
+              data: mensualCounts,
+              borderColor: "#3b82f6",
+              backgroundColor: "rgba(59, 130, 246, 0.2)",
+              fill: true,
+              tension: 0.3
+            }]
+          }
+        });
+
+      } catch (err) {
+        console.error("Error cargando PQRS:", err);
       }
+    }
+
+    cargarDatos();
+
+    // Búsqueda (resalta coincidencias en tipo y estado)
+    document.getElementById("searchInput").addEventListener("input", function() {
+      const q = this.value.toLowerCase();
+      document.querySelectorAll("#chartTipo, #chartEstado, #chartMensual").forEach(c => {
+        // Simple feedback: se puede mejorar para filtrar datos si se requiere
+        c.style.border = q ? "2px solid #6366f1" : "none";
+      });
     });
   </script>
 </body>
