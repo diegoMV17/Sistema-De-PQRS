@@ -1,221 +1,280 @@
 <!DOCTYPE html>
 <html lang="es" class="scroll-smooth">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema PQRS - Consulta</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistema PQRS - Consulta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            fontFamily: { sans: ["Inter", "system-ui", "sans-serif"] },
+          },
+        },
+      };
+    </script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <!-- Navbar -->
+    <nav
+      class="bg-white dark:bg-gray-800 shadow-lg border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50"
+    >
+      <div th:replace="~{fragments/navbar :: navbar}"></div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main class="px-4 py-10 min-h-[70vh]">
+      <div class="max-w-3xl mx-auto text-center mb-10">
+        <h1 class="text-3xl font-bold">Consulta el estado de tu PQRS</h1>
+        <p class="text-gray-600 dark:text-gray-400 mt-2">
+          Ingrese su <strong>número de radicado</strong> o su
+          <strong>cédula</strong> para consultar.
+        </p>
+      </div>
+
+      <!-- Formulario -->
+      <div
+        class="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6"
+      >
+        <form id="consultaForm" class="flex flex-col gap-4">
+          <div>
+            <label for="numeroRadicado" class="block text-sm font-medium"
+              >Número de radicado</label
+            >
+            <input
+              type="text"
+              id="numeroRadicado"
+              placeholder="Ej: 2025-000123"
+              class="w-full border border-blue-300 rounded-md px-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
+            />
+          </div>
+
+          <div>
+            <label for="cedula" class="block text-sm font-medium">Cédula</label>
+            <input
+              type="text"
+              id="cedula"
+              placeholder="Ej: 1234567890"
+              class="w-full border border-blue-300 rounded-md px-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
+            />
+          </div>
+
+          <button
+            type="submit"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+          >
+            Consultar
+          </button>
+        </form>
+      </div>
+    </main>
+
+    <!-- Modal -->
+    <div
+      id="resultadoModal"
+      class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50"
+    >
+      <div
+        class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-2xl p-6 relative animate-fadeIn max-h-[90vh] flex flex-col"
+      >
+        <!-- Botón cerrar -->
+        <button
+          id="cerrarModal"
+          class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-2xl font-bold transition"
+        >
+          &times;
+        </button>
+
+        <!-- Header -->
+        <div class="border-b border-gray-200 dark:border-gray-700 pb-3 mb-4">
+          <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100">
+            Resultado de la Consulta
+          </h2>
+        </div>
+
+        <!-- Contenido dinámico -->
+        <div
+          id="contenidoModal"
+          class="flex-1 space-y-4 text-gray-700 dark:text-gray-200"
+        >
+          <p>
+            <span class="font-semibold">Cédula:</span>
+            <span id="modalCedula"></span>
+          </p>
+
+          <p>
+            <span class="font-semibold">Número de radicado:</span>
+            <span id="modalRadicado"></span>
+          </p>
+
+          <div>
+            <span class="font-semibold">Descripción:</span>
+            <div
+              id="modalDescripcion"
+              class="mt-1 p-3 bg-gray-50 dark:bg-gray-700 rounded-md text-sm leading-relaxed break-words max-h-40 overflow-y-auto"
+            >
+              <!-- Aquí se insertará la descripción -->
+            </div>
+          </div>
+
+          <p>
+            <span class="font-semibold">Estado:</span>
+            <span id="modalEstado"></span>
+          </p>
+        </div>
+
+        <!-- Footer -->
+        <div
+          class="mt-4 flex justify-end border-t border-gray-200 dark:border-gray-700 pt-3"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Animación con Tailwind -->
+    <style>
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
         }
       }
-    }
-  </script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-</head>
-<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+      .animate-fadeIn {
+        animation: fadeIn 0.25s ease-out;
+      }
+    </style>
 
-  <!-- Navbar -->
-  <nav class="bg-white dark:bg-gray-800 shadow-lg border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
-    <div th:replace="~{fragments/navbar :: navbar}"></div>
-  </nav>
+    <!-- Animación suave -->
+    <style>
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      .animate-fadeIn {
+        animation: fadeIn 0.25s ease-out;
+      }
+    </style>
 
-  <!-- Contenido principal -->
-  <main class="px-4 py-10 min-h-[70vh]">
-    <div class="max-w-3xl mx-auto text-center mb-10">
-      <h1 class="text-3xl font-bold">Consulta el estado de tu PQRS</h1>
-      <p class="text-gray-600 dark:text-gray-400 mt-2">
-        Ingrese su <strong>número de radicado</strong> o su <strong>cédula</strong> para consultar.
-      </p>
-    </div>
-
-    <!-- Formulario -->
-    <div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-      <form id="consultaForm" class="flex flex-col gap-4">
-        
-        <div>
-          <label for="numeroRadicado" class="block text-sm font-medium">Número de radicado</label>
-          <input
-            type="text"
-            id="numeroRadicado"
-            placeholder="Ej: 2025-000123"
-            class="w-full border border-blue-300 rounded-md px-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
-          />
-        </div>
-
-        <div>
-          <label for="cedula" class="block text-sm font-medium">Cédula</label>
-          <input
-            type="text"
-            id="cedula"
-            placeholder="Ej: 1234567890"
-            class="w-full border border-blue-300 rounded-md px-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
-          />
-        </div>
-
-        <button
-          type="submit"
-          class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-600"
-        >
-          Consultar
-        </button>
-      </form>
-    </div>
-  </main>
-
-<!-- Modal -->
-<div id="resultadoModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-2xl p-6 relative animate-fadeIn max-h-[90vh] flex flex-col">
-    
-    <!-- Botón cerrar -->
-    <button id="cerrarModal" 
-            class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-2xl font-bold transition">
-      &times;
-    </button>
-
-    <!-- Header -->
-    <div class="border-b border-gray-200 dark:border-gray-700 pb-3 mb-4">
-      <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100">
-        Resultado de la Consulta
-      </h2>
-    </div>
-
-    <!-- Contenido dinámico -->
-    <div id="contenidoModal" class="flex-1 space-y-4 text-gray-700 dark:text-gray-200">
-      <p>
-        <span class="font-semibold">Cédula:</span>
-        <span id="modalCedula"></span>
-      </p>
-      
-      <p>
-        <span class="font-semibold">Número de radicado:</span>
-        <span id="modalRadicado"></span>
-      </p>
-      
-      <div>
-        <span class="font-semibold">Descripción:</span>
-        <div id="modalDescripcion"
-             class="mt-1 p-3 bg-gray-50 dark:bg-gray-700 rounded-md text-sm leading-relaxed break-words max-h-40 overflow-y-auto">
-          <!-- Aquí se insertará la descripción -->
-        </div>
-      </div>
-      
-      <p>
-        <span class="font-semibold">Estado:</span>
-        <span id="modalEstado"></span>
-      </p>
-    </div>
+    <!-- Animación con Tailwind -->
+    <style>
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      .animate-fadeIn {
+        animation: fadeIn 0.25s ease-out;
+      }
+    </style>
 
     <!-- Footer -->
-    <div class="mt-4 flex justify-end border-t border-gray-200 dark:border-gray-700 pt-3">
-     
-    </div>
-  </div>
-</div>
+    <footer class="mt-10">
+      <div th:replace="~{fragments/footer :: footer}"></div>
+    </footer>
 
-<!-- Animación con Tailwind -->
-<style>
-  @keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to   { opacity: 1; transform: scale(1); }
-  }
-  .animate-fadeIn {
-    animation: fadeIn 0.25s ease-out;
-  }
-</style>
+    <!-- Scripts -->
+    <script src="navbar.js"></script>
+    <script src="footer.js"></script>
+    <script>
+      document
+        .getElementById("consultaForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
 
+          const numeroRadicado = document
+            .getElementById("numeroRadicado")
+            .value.trim();
+          const cedula = document.getElementById("cedula").value.trim();
 
-<!-- Animación suave -->
-<style>
-  @keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to   { opacity: 1; transform: scale(1); }
-  }
-  .animate-fadeIn {
-    animation: fadeIn 0.25s ease-out;
-  }
-</style>
+          if (!numeroRadicado && !cedula) {
+            alert("Debe ingresar al menos el número de radicado o la cédula.");
+            return;
+          }
 
-<!-- Animación con Tailwind -->
-<style>
-  @keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to   { opacity: 1; transform: scale(1); }
-  }
-  .animate-fadeIn {
-    animation: fadeIn 0.25s ease-out;
-  }
-</style>
+          let url = "";
+          if (numeroRadicado) {
+            url = `/api/pqrs/buscarPorRadicado/${numeroRadicado}`;
+          } else if (cedula) {
+            url = `/api/pqrs/buscarPorDocumento/${cedula}`;
+          }
 
+          try {
+            const response = await fetch(url);
 
+            // Verificar si no hay resultados (204) o error
+            if (!response.ok || response.status === 204) {
+              if (numeroRadicado) {
+                alert("El número de radicado ingresado no existe.");
+              } else if (cedula) {
+                alert("La cédula ingresada no está registrada.");
+              }
+              return;
+            }
 
-  
+            const data = await response.json();
 
-  <!-- Footer -->
-  <footer class="mt-10">
-    <div th:replace="~{fragments/footer :: footer}"></div>
-  </footer>
+            if (!data.length) {
+              // En caso de que el backend devuelva [] en lugar de 204
+              if (numeroRadicado) {
+                alert("El número de radicado ingresado no existe.");
+              } else if (cedula) {
+                alert("La cédula ingresada no está registrada.");
+              }
+              return;
+            }
 
-  <!-- Scripts -->
-  <script src="navbar.js"></script>
-  <script src="footer.js"></script>
-  <script>
-    document.getElementById("consultaForm").addEventListener("submit", async function(e) {
-      e.preventDefault();
-      const numeroRadicado = document.getElementById("numeroRadicado").value.trim();
-      const cedula = document.getElementById("cedula").value.trim();
+            // Mostrar resultados en el modal
+            const contenido = data
+              .map(
+                (pqrs) => `
+        <div class="border-b border-gray-200 dark:border-gray-700 pb-2 mb-2">
+          <p><strong>Cédula:</strong> ${
+            pqrs.peticionario?.numeroDocumento || "N/A"
+          }</p>
+          <p><strong>Número de radicado:</strong> ${pqrs.numeroRadicado}</p>
+          <p><strong>Descripción:</strong> ${pqrs.descripcion}</p>
+          <p><strong>Estado:</strong> ${pqrs.estado?.nombre || "Sin estado"}</p>
+        </div>
+      `
+              )
+              .join("");
 
-      if (!numeroRadicado && !cedula) {
-        alert("Debe ingresar al menos el número de radicado o la cédula.");
-        return;
-      }
+            document.getElementById("contenidoModal").innerHTML = contenido;
+            document
+              .getElementById("resultadoModal")
+              .classList.remove("hidden");
+            document.getElementById("resultadoModal").classList.add("flex");
+          } catch (err) {
+            console.error("Error consultando:", err);
+            alert("Ocurrió un error al consultar la información.");
+          }
+        });
 
-      let url = "";
-      if (numeroRadicado) {
-        url = `/api/pqrs/buscarPorRadicado/${numeroRadicado}`;
-      } else if (cedula) {
-        url = `/api/pqrs/buscarPorCedula/${cedula}`;
-      }
-
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          alert("No se encontraron resultados.");
-          return;
-        }
-        const data = await response.json();
-        if (!data.length) {
-          alert("No se encontraron resultados.");
-          return;
-        }
-
-        // Mostrar todos los resultados en el modal
-        const contenido = data.map(pqrs => `
-          <div class="border-b border-gray-200 dark:border-gray-700 pb-2 mb-2">
-            <p><strong>Cédula:</strong> ${pqrs.peticionario?.numeroDocumento || "N/A"}</p>
-            <p><strong>Número de radicado:</strong> ${pqrs.numeroRadicado}</p>
-            <p><strong>Descripción:</strong> ${pqrs.descripcion}</p>
-            <p><strong>Estado:</strong> ${pqrs.estado?.nombre || "Sin estado"}</p>
-          </div>
-        `).join("");
-
-        document.getElementById("contenidoModal").innerHTML = contenido;
-        document.getElementById("resultadoModal").classList.remove("hidden");
-        document.getElementById("resultadoModal").classList.add("flex");
-      } catch (err) {
-        console.error("Error consultando:", err);
-      }
-    });
-
-    // Cerrar modal
-    document.getElementById("cerrarModal").addEventListener("click", () => {
-      document.getElementById("resultadoModal").classList.add("hidden");
-      document.getElementById("resultadoModal").classList.remove("flex");
-    });
-  </script>
-</body>
+      // Cerrar modal
+      document.getElementById("cerrarModal").addEventListener("click", () => {
+        document.getElementById("resultadoModal").classList.add("hidden");
+        document.getElementById("resultadoModal").classList.remove("flex");
+      });
+    </script>
+  </body>
 </html>
