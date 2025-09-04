@@ -63,6 +63,8 @@ public class Pqrs {
     public String getNumeroRadicado() { return numeroRadicado; }
     public void setNumeroRadicado(String numeroRadicado) { this.numeroRadicado = numeroRadicado; }
 
+  
+
     public PqrsEstado getEstado() { return estado; }
     public void setEstado(PqrsEstado estado) { this.estado = estado; }
 }

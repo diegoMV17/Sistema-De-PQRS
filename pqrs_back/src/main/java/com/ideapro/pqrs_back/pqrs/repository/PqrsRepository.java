@@ -20,6 +20,8 @@ public interface PqrsRepository extends JpaRepository<Pqrs, Long> {
     // Buscar PQRS por número de radicado
     List<Pqrs> findByNumeroRadicado(String numeroRadicado);
 
+    List<Pqrs> findByPeticionario_NumeroDocumento(String numeroDocumento);
+
     // Contar todas las PQRS
     long count();
 

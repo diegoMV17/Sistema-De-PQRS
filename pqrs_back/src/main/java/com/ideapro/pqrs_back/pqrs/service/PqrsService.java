@@ -97,6 +97,10 @@ public class PqrsService {
         return pqrsRepository.findByNumeroRadicado(numeroRadicado);
     }
 
+     public List<Pqrs> buscarPorNumeroDocumento(String numeroDocumento) {
+        return pqrsRepository.findByPeticionario_NumeroDocumento(numeroDocumento);
+    }
+
     // Contar todas las PQRS
     public long contarPqrs() {
         return pqrsRepository.count();

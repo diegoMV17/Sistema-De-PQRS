@@ -7,6 +7,7 @@ package com.ideapro.pqrs_back.pqrs.controller;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.catalina.connector.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import com.ideapro.pqrs_back.pqrs.service.PqrsService;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+
 
 @SuppressWarnings("unused")
 @RestController
@@ -84,6 +86,18 @@ public class PqrsController {
         }
         return ResponseEntity.ok(resultados);
     }
+
+    @GetMapping("/buscarPorDocumento/{numeroDocumento}")
+    public ResponseEntity<List<Pqrs>> buscarPorDocumento(@PathVariable String numeroDocumento) {
+        List<Pqrs> resultados = pqrsService.buscarPorNumeroDocumento(numeroDocumento);
+
+        if (resultados.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(resultados);
+    }
+
+    
 
     // Eliminar PQRS
     @DeleteMapping("/eliminar/{id}")

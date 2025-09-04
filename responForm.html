@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responder Solicitudes - PQRS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+  <!-- Top Navigation -->
+  <nav class="bg-slate-800 border-b border-slate-700">
+    <div class="flex items-center justify-between px-6 py-4">
+      <div class="text-xl font-semibold text-white">
+        Sistema <span class="text-blue-400">PQRS</span>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <button class="text-slate-300 hover:text-white transition-colors relative">
+          <!-- Icono campana -->
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405C18.21 15.21 18 14.702 18 14V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3c0 .702-.21 1.21-.595 1.595L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+          </svg>
+          <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">3</span>
+        </button>
+
+        <div class="flex items-center gap-2 text-slate-300">
+          <!-- Icono usuario -->
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A9 9 0 0112 15a9 9 0 016.879 2.804M15 11a3 3 0 10-6 0 3 3 0 006 0z"></path>
+          </svg>
+          <span class="hidden md:block">Juan Pérez</span>
+        </div>
+
+        <button class="text-slate-300 hover:text-white transition-colors">
+          <!-- Icono logout -->
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenedor principal -->
+  <main class="max-w-5xl mx-auto p-6">
+
+    <!-- Formulario de Respuesta -->
+    <div class="bg-white shadow rounded-2xl p-6 mt-6">
+      <h3 class="text-xl font-semibold text-gray-800 mb-4">Responder Solicitud</h3>
+      <p class="text-gray-500 mb-6">El funcionario puede registrar la respuesta a una solicitud PQRS.</p>
+
+      <form action="/responder_solicitud" method="POST" enctype="multipart/form-data" class="space-y-4">
+        <!-- Número de solicitud -->
+        <div>
+          <label for="solicitud_id" class="block text-sm font-medium text-gray-700">Número de Solicitud</label>
+          <input type="text" id="solicitud_id" name="solicitud_id" placeholder="Ej: 12345"
+                 class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-400 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+        </div>
+
+        <!-- Estado de la solicitud -->
+        <div>
+          <label for="estado" class="block text-sm font-medium text-gray-700">Estado de la Solicitud</label>
+          <select id="estado" name="estado"
+                  class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-400 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+            <option value="Aprobado">Aprobado</option>
+            <option value="Pendiente">Pendiente</option>
+            <option value="Rechazado">Rechazado</option>
+            <option value="En Proceso">En Proceso</option>
+          </select>
+        </div>
+
+        <!-- Respuesta del funcionario -->
+        <div>
+          <label for="respuesta" class="block text-sm font-medium text-gray-700">Respuesta del Funcionario</label>
+          <textarea id="respuesta" name="respuesta" rows="4" placeholder="Escribe la respuesta aquí..."
+                    class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-400 focus:ring focus:ring-blue-200 focus:ring-opacity-50"></textarea>
+        </div>
+
+
+        <!-- Botón enviar -->
+        <div class="flex justify-end">
+          <button type="submit"
+                  class="px-6 py-2 rounded-xl bg-blue-600 text-white font-medium shadow hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300">
+            Enviar Respuesta
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+</body>
+</html>
