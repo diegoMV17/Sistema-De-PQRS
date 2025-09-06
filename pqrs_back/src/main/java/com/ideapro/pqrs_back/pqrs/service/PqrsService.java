@@ -7,7 +7,9 @@ package com.ideapro.pqrs_back.pqrs.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +21,15 @@ import com.ideapro.pqrs_back.pqrs.model.Pqrs;
 import com.ideapro.pqrs_back.pqrs.model.PqrsEstado;
 
 import com.ideapro.pqrs_back.pqrs.repository.PqrsRepository;
+import com.ideapro.pqrs_back.service.EmailService;
 import com.ideapro.pqrs_back.pqrs.repository.PqrsEstadoRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class PqrsService {
+
+    private final EmailService emailService;
 
     @Autowired
     private PqrsRepository pqrsRepository;
@@ -35,7 +40,9 @@ public class PqrsService {
     @Autowired
     private PeticionarioRepository peticionarioRepository;
 
-
+    PqrsService(EmailService emailService) {
+        this.emailService = emailService;
+    }
 
     // Crear nueva PQRS
     public Pqrs crearPqrs(Pqrs pqrs) {
@@ -50,8 +57,6 @@ public class PqrsService {
                 .orElseThrow(() -> new EntityNotFoundException("Estado 'Pendiente' no existe en BD"));
         pqrs.setEstado(estadoInicial);
 
-
-
         // Verificar si el peticionario ya existe por número de documento o email
         Peticionario pet = pqrs.getPeticionario();
         if (pet != null) {
@@ -61,7 +66,20 @@ public class PqrsService {
             pqrs.setPeticionario(existente);
         }
 
-        return pqrsRepository.save(pqrs);
+        Pqrs pqrsGuardada = pqrsRepository.save(pqrs);
+
+        // Enviar email si hay peticionario y tiene email
+        if (pqrs.getPeticionario() != null && pqrs.getPeticionario().getEmail() != null) {
+            try {
+                emailService.enviarConfirmacionPQRS(
+                        pqrs.getPeticionario().getEmail(),
+                        pqrs.getNumeroRadicado());
+            } catch (Exception e) {
+                throw new RuntimeException("Error al enviar email de confirmación: " + e.getMessage());
+            }
+        }
+
+        return pqrsGuardada;
     }
 
     // Generar número de radicado único
@@ -97,7 +115,7 @@ public class PqrsService {
         return pqrsRepository.findByNumeroRadicado(numeroRadicado);
     }
 
-     public List<Pqrs> buscarPorNumeroDocumento(String numeroDocumento) {
+    public List<Pqrs> buscarPorNumeroDocumento(String numeroDocumento) {
         return pqrsRepository.findByPeticionario_NumeroDocumento(numeroDocumento);
     }
 
@@ -120,6 +138,28 @@ public class PqrsService {
     // Obtener estado de PQRS por número de radicado
     public PqrsEstado obtenerEstadoPorRadicado(String numeroRadicado) {
         return pqrsRepository.findEstadoByNumeroRadicado(numeroRadicado)
-                .orElseThrow(() -> new EntityNotFoundException("PQRS no encontrada con número de radicado: " + numeroRadicado));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "PQRS no encontrada con número de radicado: " + numeroRadicado));
+    }
+
+    public Map<String, Object> obtenerHistorialPqrs() {
+        Map<String, Object> historial = new HashMap<>();
+
+        // Obtener conteo por estado
+        List<Map<String, Object>> estadisticas = pqrsRepository.countPqrsByEstado();
+
+        // Obtener PQRS por cada estado
+        List<Pqrs> pendientes = pqrsRepository.findByEstadoNombreOrderByFechaRegistroDesc("Pendiente");
+        List<Pqrs> enProceso = pqrsRepository.findByEstadoNombreOrderByFechaRegistroDesc("En Proceso");
+        List<Pqrs> resueltas = pqrsRepository.findByEstadoNombreOrderByFechaRegistroDesc("Resuelta");
+        List<Pqrs> canceladas = pqrsRepository.findByEstadoNombreOrderByFechaRegistroDesc("Cancelada");
+
+        historial.put("estadisticas", estadisticas);
+        historial.put("pendientes", pendientes);
+        historial.put("enProceso", enProceso);
+        historial.put("resueltas", resueltas);
+        historial.put("canceladas", canceladas);
+
+        return historial;
     }
 }

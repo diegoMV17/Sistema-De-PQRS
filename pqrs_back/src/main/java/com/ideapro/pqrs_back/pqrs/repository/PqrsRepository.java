@@ -6,6 +6,7 @@
 package com.ideapro.pqrs_back.pqrs.repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,7 +17,7 @@ import com.ideapro.pqrs_back.pqrs.model.Pqrs;
 import com.ideapro.pqrs_back.pqrs.model.PqrsEstado;
 
 public interface PqrsRepository extends JpaRepository<Pqrs, Long> {
-    
+
     // Buscar PQRS por número de radicado
     List<Pqrs> findByNumeroRadicado(String numeroRadicado);
 
@@ -33,6 +34,12 @@ public interface PqrsRepository extends JpaRepository<Pqrs, Long> {
     @Query("SELECT p.estado FROM Pqrs p WHERE p.numeroRadicado = :numeroRadicado")
     Optional<PqrsEstado> findEstadoByNumeroRadicado(@Param("numeroRadicado") String numeroRadicado);
 
-List<Pqrs> findByEstadoNombre(String nombreEstado);
+    List<Pqrs> findByEstadoNombre(String nombreEstado);
+
+    @Query("SELECT new map(p.estado.nombre as estado, COUNT(p) as cantidad, p.estado.id as estadoId) " +
+            "FROM Pqrs p GROUP BY p.estado.nombre, p.estado.id")
+    List<Map<String, Object>> countPqrsByEstado();
+
+    List<Pqrs> findByEstadoNombreOrderByFechaRegistroDesc(String nombreEstado);
 
 }

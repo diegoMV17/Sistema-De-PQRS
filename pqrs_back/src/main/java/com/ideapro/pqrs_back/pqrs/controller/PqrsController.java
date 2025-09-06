@@ -5,6 +5,7 @@
 package com.ideapro.pqrs_back.pqrs.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.catalina.connector.Response;
@@ -20,7 +21,6 @@ import com.ideapro.pqrs_back.pqrs.service.PqrsService;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-
 
 @SuppressWarnings("unused")
 @RestController
@@ -97,8 +97,6 @@ public class PqrsController {
         return ResponseEntity.ok(resultados);
     }
 
-    
-
     // Eliminar PQRS
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<Void> eliminarPqrs(@PathVariable Long id) {
@@ -137,4 +135,9 @@ public class PqrsController {
         return ResponseEntity.ok(lista);
     }
 
+    @GetMapping("/historial")
+    public ResponseEntity<Map<String, Object>> obtenerHistorialPqrs() {
+        Map<String, Object> historial = pqrsService.obtenerHistorialPqrs();
+        return ResponseEntity.ok(historial);
+    }
 }
