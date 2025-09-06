@@ -18,6 +18,11 @@ import com.ideapro.pqrs_back.pqrs.model.PqrsEstado;
 
 public interface PqrsRepository extends JpaRepository<Pqrs, Long> {
 
+    int countByEstadoNombre(String nombreEstado);
+
+    // Buscar PQRS por varios estados
+    List<Pqrs> findByEstadoNombreIn(List<String> nombresEstado);
+
     // Buscar PQRS por número de radicado
     List<Pqrs> findByNumeroRadicado(String numeroRadicado);
 
