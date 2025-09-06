@@ -20,6 +20,7 @@ target/
 *.ipr
 
 ### NetBeans ###
+C:\Users\diego\Documents\GitHub\Sistema-De-PQRS\pqrs_back\src\main\resources\application.properties
 /nbproject/private/
 /nbbuild/
 /dist/
