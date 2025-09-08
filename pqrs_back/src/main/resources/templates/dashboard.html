@@ -6,128 +6,48 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen bg-slate-50">
-
 <!-- Notificaciones flotantes -->
 <div id="notificaciones" class="fixed top-4 right-4 z-50 space-y-2"></div>
-
 <!-- Top Navigation -->
 <nav class="bg-slate-800 border-b border-slate-700">
   <div class="flex items-center justify-between px-6 py-4">
-    <div class="text-xl font-semibold text-white">
-      Sistema <span class="text-blue-400">PQRS</span>
-    </div>
-
+    <div class="text-xl font-semibold text-white">Sistema <span class="text-blue-400">PQRS</span></div>
     <div class="flex items-center gap-4">
-      <!-- Campana con dropdown -->
       <div class="relative">
-        <button class="text-slate-300 hover:text-white transition-colors relative" id="campanaBtn">
-          <!-- Icono campana -->
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405C18.21 15.21 18 14.702 18 14V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3c0 .702-.21 1.21-.595 1.595L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-          </svg>
+        <button class="text-slate-300 hover:text-white" id="campanaBtn">
+          <!-- icono -->
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405C18.21 15.21 18 14.702 18 14V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3c0 .702-.21 1.21-.595 1.595L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
           <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" id="notiCount">0</span>
         </button>
-
-        <!-- Dropdown -->
-        <div id="dropdownNotificaciones" 
-             class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-slate-200 hidden z-50">
+        <div id="dropdownNotificaciones" class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-slate-200 hidden z-50">
           <div class="p-3 border-b font-semibold text-slate-700">Notificaciones</div>
-          <div id="listaNotificaciones" class="max-h-64 overflow-y-auto text-sm">
-            <p class="p-3 text-slate-500">No tienes notificaciones pendientes.</p>
-          </div>
-          <div class="p-2 text-center">
-            <button onclick="document.getElementById('dropdownNotificaciones').classList.add('hidden')" 
-                    class="text-blue-600 text-xs hover:underline">Cerrar</button>
-          </div>
+          <div id="listaNotificaciones" class="max-h-64 overflow-y-auto text-sm"><p class="p-3 text-slate-500">No tienes notificaciones pendientes.</p></div>
+          <div class="p-2 text-center"><button onclick="document.getElementById('dropdownNotificaciones').classList.add('hidden')" class="text-blue-600 text-xs hover:underline">Cerrar</button></div>
         </div>
       </div>
-
       <div class="flex items-center gap-2 text-slate-300">
-        <!-- Icono usuario -->
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A9 9 0 0112 15a9 9 0 016.879 2.804M15 11a3 3 0 10-6 0 3 3 0 006 0z"></path>
-        </svg>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A9 9 0 0112 15a9 9 0 016.879 2.804M15 11a3 3 0 10-6 0 3 3 0 006 0z"></path></svg>
         <span class="hidden md:block">Juan Pérez</span>
       </div>
-
-      <button id="logoutBtn" class="text-slate-300 hover:text-white transition-colors">
-        <!-- Icono logout -->
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"></path>
-        </svg>
-      </button>
+      <button id="logoutBtn" class="text-slate-300 hover:text-white"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"></path></svg></button>
     </div>
   </div>
 </nav>
-
 <div class="flex">
-  <!-- Sidebar -->
-  <aside class="w-64 bg-white border-r border-slate-200 min-h-[calc(100vh-80px)]">
-    <div class="p-6">
-      <nav class="space-y-2">
-        <a href="/dashboard" class="flex items-center p-2 rounded-lg hover:bg-slate-100 text-slate-700">
-          🏠 <span class="ml-2">Dashboard</span>
-        </a>
-        <a href="/reportes" class="flex items-center p-2 rounded-lg bg-slate-100 text-slate-900 font-medium">
-          📊 <span class="ml-2">Reportes</span>
-        </a>
-      </nav>
-    </div>
-  </aside>
-
-  <!-- Main Content -->
+  <aside class="w-64 bg-white border-r border-slate-200 min-h-[calc(100vh-80px)]"><nav class="p-6 space-y-2"><a href="/dashboard" class="flex items-center p-2 rounded-lg hover:bg-slate-100 text-slate-700">🏠 <span class="ml-2">Dashboard</span></a><a href="/reportes" class="flex items-center p-2 rounded-lg bg-slate-100 text-slate-900 font-medium">📊 <span class="ml-2">Reportes</span></a></nav></aside>
   <main class="flex-1 p-6">
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-slate-900 mb-2">Dashboard</h1>
-      <p class="text-slate-600">Resumen de PQRS.</p>
-    </div>
-
-    <!-- Stats Cards -->
+    <h1 class="text-3xl font-bold text-slate-900 mb-2">Dashboard</h1>
+    <p class="text-slate-600 mb-8">Resumen de PQRS.</p>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
-        <div class="flex items-center justify-between pb-2">
-          <h3 class="text-sm font-medium text-slate-600">Peticiones</h3> 👥
-        </div>
-        <div class="text-2xl font-bold text-slate-900" id="totalPeticiones">0</div>
-        <p class="text-xs text-slate-500">Total de peticiones</p>
-      </div>
-
-      <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
-        <div class="flex items-center justify-between pb-2">
-          <h3 class="text-sm font-medium text-slate-600">Quejas</h3> ❗
-        </div>
-        <div class="text-2xl font-bold text-slate-900" id="totalQuejas">0</div>
-        <p class="text-xs text-slate-500">Total de quejas registradas</p>
-      </div>
-
-      <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
-        <div class="flex items-center justify-between pb-2">
-          <h3 class="text-sm font-medium text-slate-600">Reclamos</h3> 💡
-        </div>
-        <div class="text-2xl font-bold text-slate-900" id="totalReclamos">0</div>
-        <p class="text-xs text-slate-500">Total de reclamos registrados</p>
-      </div>
-
-      <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
-        <div class="flex items-center justify-between pb-2">
-          <h3 class="text-sm font-medium text-slate-600">Sugerencias</h3> 📄
-        </div>
-        <div class="text-2xl font-bold text-slate-900" id="totalSugerencias">0</div>
-        <p class="text-xs text-slate-500">Total de solicitudes registradas</p>
-      </div>
+      <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm"><h3 class="text-sm font-medium text-slate-600">Peticiones</h3>👥<div class="text-2xl font-bold text-slate-900" id="totalPeticiones">0</div><p class="text-xs text-slate-500">Total de peticiones</p></div>
+      <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm"><h3 class="text-sm font-medium text-slate-600">Quejas</h3>❗<div class="text-2xl font-bold text-slate-900" id="totalQuejas">0</div><p class="text-xs text-slate-500">Total de quejas registradas</p></div>
+      <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm"><h3 class="text-sm font-medium text-slate-600">Reclamos</h3>💡<div class="text-2xl font-bold text-slate-900" id="totalReclamos">0</div><p class="text-xs text-slate-500">Total de reclamos registrados</p></div>
+      <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm"><h3 class="text-sm font-medium text-slate-600">Sugerencias</h3>📄<div class="text-2xl font-bold text-slate-900" id="totalSugerencias">0</div><p class="text-xs text-slate-500">Total de solicitudes registradas</p></div>
     </div>
-
-    <!-- Lista de solicitudes -->
     <div class="bg-white border border-slate-200 rounded-lg shadow-sm mt-6">
       <div class="p-4 border-b border-slate-200 flex justify-between items-center">
         <h2 class="text-lg font-semibold">Lista de solicitudes</h2>
-        <!-- Barra de búsqueda -->
-        <input 
-          id="searchInput"
-          type="text" 
-          placeholder="Buscar solicitud..." 
-          class="px-3 py-2 border rounded-lg text-sm w-64 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        >
+        <input id="searchInput" type="text" placeholder="Buscar solicitud..." class="px-3 py-2 border rounded-lg text-sm w-64 focus:outline-none focus:ring-2 focus:ring-blue-400">
       </div>
       <div class="p-4 overflow-x-auto">
         <table class="min-w-full border-collapse border border-slate-200 text-sm">
@@ -138,7 +58,9 @@
               <th class="border-b border-slate-300 px-6 py-3">Estado</th>
               <th class="border-b border-slate-300 px-6 py-3">Descripción</th>
               <th class="border-b border-slate-300 px-6 py-3">Peticionario</th>
+              <th class="border-b border-slate-300 px-6 py-3">Correo</th>
               <th class="border-b border-slate-300 px-6 py-3">Fecha</th>
+              <th class="border-b border-slate-300 px-6 py-3">Acciones</th>
             </tr>
           </thead>
           <tbody id="tableBody" class="text-gray-600"></tbody>
@@ -153,36 +75,47 @@
     localStorage.clear();
     window.location.href = "/login";
   });
-
   const searchInput = document.getElementById("searchInput");
   const tableBody = document.getElementById("tableBody");
-
   // --- Función para cargar PQRS ---
   async function cargarPQRS() {
     try {
       const res = await fetch("/api/pqrs");
+      if (!res.ok) throw new Error("HTTP " + res.status);
       const pqrs = await res.json();
-
       let totalP = 0, totalQ = 0, totalR = 0, totalS = 0;
       tableBody.innerHTML = "";
-
       pqrs.forEach(p => {
-        const descripcion = p.descripcion.length > 50 
-            ? p.descripcion.substring(0, 50) + "..." 
-            : p.descripcion;
-
+        if (p.estado?.nombre !== "Pendiente") return; // Solo mostrar pendientes
+        const descripcion = p.descripcion && p.descripcion.length > 50 ? p.descripcion.substring(0, 50) + "..." : (p.descripcion || "");
+        const correo = p.peticionario?.correo || p.peticionario?.email || "-";
         const row = document.createElement("tr");
         row.className = "hover:bg-slate-50 transition-colors duration-300";
+        row.dataset.id = p.id;
         row.innerHTML = `
-          <td class="border-b border-slate-200 px-6 py-3">${p.numeroRadicado}</td>
-          <td class="border-b border-slate-200 px-6 py-3">${p.tipo}</td>
-          <td class="border-b border-slate-200 px-6 py-3">${p.estado.nombre}</td>
-          <td class="border-b border-slate-200 px-6 py-3" title="${p.descripcion}">${descripcion}</td>
-          <td class="border-b border-slate-200 px-6 py-3">${p.peticionario.nombres} ${p.peticionario.apellidos}</td>
-          <td class="border-b border-slate-200 px-6 py-3">${new Date(p.fechaRegistro).toLocaleDateString()}</td>
+          <td class='border-b border-slate-200 px-6 py-3'>${p.numeroRadicado || ""}</td>
+          <td class='border-b border-slate-200 px-6 py-3'>${p.tipo || ""}</td>
+          <td class='border-b border-slate-200 px-6 py-3'>${p.estado?.nombre || ""}</td>
+          <td class='border-b border-slate-200 px-6 py-3' title='${p.descripcion || ""}'>${descripcion}</td>
+          <td class='border-b border-slate-200 px-6 py-3'>${(p.peticionario?.nombres||"") + " " + (p.peticionario?.apellidos||"")}</td>
+          <td class='border-b border-slate-200 px-6 py-3'>${correo}</td>
+          <td class='border-b border-slate-200 px-6 py-3'>${p.fechaRegistro ? new Date(p.fechaRegistro).toLocaleDateString() : ""}</td>
+          <td class='border-b border-slate-200 px-6 py-3 relative'>
+            <button onclick="mostrarOpcionesEstado('${p.id}', this)" class="px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">Cambiar Estado</button>
+            <div class="estado-opciones hidden absolute left-1/2 -translate-x-1/2 top-10 min-w-[180px] bg-white border border-slate-300 rounded-lg shadow-lg p-3 z-50 flex flex-col gap-2">
+              <label class="text-xs text-slate-600 mb-1">Selecciona nuevo estado:</label>
+              <select class="estado-select border rounded px-2 py-1 text-xs focus:ring-2 focus:ring-blue-400">
+                <option value="Pendiente">Pendiente</option>
+                <option value="En Proceso">En Proceso</option>
+                <option value="Resuelto">Resuelto</option>
+                <option value="Cancelado">Cancelado</option>
+              </select>
+              <button class="guardar-estado bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs mt-2">Guardar</button>
+              <button type="button" class="cerrar-estado bg-gray-200 hover:bg-gray-300 text-gray-700 px-2 py-1 rounded text-xs mt-1">Cancelar</button>
+            </div>
+          </td>
         `;
         tableBody.appendChild(row);
-
         switch(p.tipo) {
           case "PETICION": totalP++; break;
           case "QUEJA": totalQ++; break;
@@ -190,121 +123,115 @@
           case "SUGERENCIA": totalS++; break;
         }
       });
-
       document.getElementById("totalPeticiones").innerText = totalP;
       document.getElementById("totalQuejas").innerText = totalQ;
       document.getElementById("totalReclamos").innerText = totalR;
       document.getElementById("totalSugerencias").innerText = totalS;
-
+      // Delegación de eventos para cambiar estado
+      tableBody.querySelectorAll(".guardar-estado").forEach(btn => {
+        btn.onclick = async function() {
+          const tr = btn.closest("tr");
+          const id = tr.dataset.id;
+          const nuevoEstado = tr.querySelector(".estado-select").value;
+          await cambiarEstado(id, nuevoEstado);
+          tr.querySelector('.estado-opciones').classList.add('hidden');
+          cargarPQRS();
+          actualizarNotificaciones(); // Actualiza notificaciones después de cambiar estado
+        };
+      });
+      tableBody.querySelectorAll(".cerrar-estado").forEach(btn => {
+        btn.onclick = function() {
+          btn.closest('.estado-opciones').classList.add('hidden');
+        };
+      });
     } catch (err) {
       console.error("Error cargando PQRS:", err);
     }
   }
-
   // --- Función para actualizar notificaciones ---
   async function actualizarNotificaciones() {
     try {
       const res = await fetch("/api/pqrs/notificaciones");
       if (!res.ok) throw new Error("Error HTTP: " + res.status);
       const data = await res.json();
-
       let contenido = "";
-
       if (data.nuevos > 0) {
-        contenido += `
-          <div class="p-3 border-b hover:bg-slate-50">
-            🔔 <b>${data.nuevos}</b> PQRS nuevas sin revisar
-          </div>`;
+        contenido += `<div class='p-3 border-b hover:bg-slate-50'>🔔 <b>${data.nuevos}</b> PQRS nuevas sin revisar</div>`;
       }
       if (data.porVencer > 0) {
-        contenido += `
-          <div class="p-3 border-b hover:bg-slate-50">
-            ⏰ <b>${data.porVencer}</b> PQRS próximas a vencer (14 días hábiles)
-          </div>`;
+        contenido += `<div class='p-3 border-b hover:bg-slate-50'>⏰ <b>${data.porVencer}</b> PQRS próximas a vencer (14 días hábiles)</div>`;
       }
-
-      // Mostrar detalle si viene en la respuesta
       if (data.detalles && data.detalles.length > 0) {
-        contenido += `<div class="max-h-64 overflow-y-auto">`;
+        contenido += `<div class='max-h-64 overflow-y-auto'>`;
         data.detalles.forEach(pqrs => {
-          contenido += `
-            <div class="p-3 border-b hover:bg-slate-50">
-              <p class="font-semibold text-slate-800">${pqrs.numeroRadicado}</p>
-              <p class="text-sm text-slate-600">${pqrs.tipo} - ${pqrs.estado}</p>
-              <p class="text-xs text-slate-500">📅 ${pqrs.fechaRegistro}</p>
-            </div>`;
+          contenido += `<div class='p-3 border-b hover:bg-slate-50'><p class='font-semibold text-slate-800'>${pqrs.numeroRadicado}</p><p class='text-sm text-slate-600'>${pqrs.tipo} - ${pqrs.estado}</p><p class='text-xs text-slate-500'>📅 ${pqrs.fechaRegistro}</p></div>`;
         });
         contenido += `</div>`;
       }
-
       if (!contenido) {
-        contenido = `<p class="p-3 text-slate-500">No tienes notificaciones pendientes.</p>`;
+        document.getElementById("listaNotificaciones").innerHTML = `<p class='p-3 text-slate-500'>No tienes notificaciones pendientes.</p>`;
+      } else {
+        document.getElementById("listaNotificaciones").innerHTML = contenido;
       }
-
-      document.getElementById("listaNotificaciones").innerHTML = contenido;
       document.getElementById("notiCount").innerText = (data.nuevos || 0) + (data.porVencer || 0);
     } catch (err) {
-      document.getElementById("listaNotificaciones").innerHTML =
-        `<p class="p-3 text-red-600">Error al cargar notificaciones.</p>`;
+      document.getElementById("listaNotificaciones").innerHTML = `<p class='p-3 text-red-600'>Error al cargar notificaciones.</p>`;
     }
   }
-
+  // --- Función para cambiar estado (global) ---
+  async function cambiarEstado(id, nuevoEstado) {
+    try {
+      const res = await fetch(`/api/pqrs/${id}/estado`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ estado: nuevoEstado })
+      });
+      if (!res.ok) throw new Error("Error HTTP " + res.status);
+      // Opcional: mostrar mensaje de éxito
+    } catch (err) {
+      console.error("Error al cambiar estado:", err);
+    }
+  }
+  function mostrarOpcionesEstado(id, btn) {
+    document.querySelectorAll('.estado-opciones').forEach(div => div.classList.add('hidden'));
+    const opcionesDiv = btn.parentElement.querySelector('.estado-opciones');
+    opcionesDiv.classList.toggle('hidden');
+    if (!opcionesDiv.classList.contains('hidden')) {
+      opcionesDiv.querySelector('.estado-select').focus();
+    }
+  }
   // --- Inicializar datos al cargar el dashboard ---
   cargarPQRS();
   actualizarNotificaciones();
-
   // --- Buscador ---
   searchInput.addEventListener("input", function() {
-    const filter = this.value.toLowerCase();
+    const filter = this.value.trim().toLowerCase();
     const rows = tableBody.getElementsByTagName("tr");
-
     for (let row of rows) {
-      const text = row.innerText.toLowerCase();
-      row.style.display = text.includes(filter) ? "" : "none";
+      let text = "";
+      for (let cell of row.cells) {
+        text += cell.textContent.toLowerCase() + " ";
+      }
+      // Normaliza espacios y tildes para mejorar la búsqueda
+      const normalizedText = text.normalize("NFD").replace(/\p{Diacritic}/gu, "");
+      const normalizedFilter = filter.normalize("NFD").replace(/\p{Diacritic}/gu, "");
+      row.style.display = normalizedText.includes(normalizedFilter) ? "" : "none";
     }
   });
-
-  // --- Notificaciones en la campana (dropdown) ---
+  // --- Dropdown notificaciones ---
   const campanaBtn = document.getElementById("campanaBtn");
   const dropdown = document.getElementById("dropdownNotificaciones");
-
   campanaBtn.addEventListener("click", () => {
     dropdown.classList.toggle("hidden"); 
     if (!dropdown.classList.contains("hidden")) {
       actualizarNotificaciones();
     }
   });
-
-  // --- Cerrar dropdown si se hace clic fuera ---
   document.addEventListener("click", (e) => {
     if (!campanaBtn.contains(e.target) && !dropdown.contains(e.target)) {
       dropdown.classList.add("hidden");
     }
   });
-
-  // --- Llamada directa después de crear una nueva PQRS ---
-  async function crearPqrs(nuevaPqrs) {
-    try {
-      const res = await fetch("/api/pqrs", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(nuevaPqrs)
-      });
-
-      if (!res.ok) throw new Error("Error HTTP " + res.status);
-
-      const data = await res.json();
-
-      // ✅ Refrescar tabla y notificaciones al instante
-      await cargarPQRS();
-      await actualizarNotificaciones();
-
-      alert("PQRS creada con éxito (Radicado: " + data.numeroRadicado + ")");
-    } catch (err) {
-      console.error("Error creando PQRS:", err);
-      alert("Error al crear la PQRS.");
-    }
-  }
 </script>
 </body>
 </html>

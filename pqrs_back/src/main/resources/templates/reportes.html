@@ -63,19 +63,21 @@
 
       <!-- Grid de gráficos -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-white shadow rounded-xl p-4">
-          <h3 class="text-lg font-semibold mb-4">Solicitudes por Tipo</h3>
-          <canvas id="chartTipo"></canvas>
+        <div class="bg-white shadow rounded-xl p-4 flex flex-col items-center justify-center">
+          <h3 class="text-lg font-semibold mb-2 text-center">Solicitudes por Tipo</h3>
+          <canvas id="chartTipo" style="max-width:350px;max-height:350px;"></canvas>
+          <div id="tipoLegend" class="flex flex-wrap gap-2 mt-4 justify-center"></div>
         </div>
 
-        <div class="bg-white shadow rounded-xl p-4">
-          <h3 class="text-lg font-semibold mb-4">Estados de Solicitudes</h3>
-          <canvas id="chartEstado"></canvas>
+        <div class="bg-white shadow rounded-xl p-4 flex flex-col items-center justify-center">
+          <h3 class="text-lg font-semibold mb-2 text-center">Estados de Solicitudes</h3>
+          <canvas id="chartEstado" style="max-width:350px;max-height:350px;"></canvas>
+          <div id="estadoLegend" class="flex flex-wrap gap-2 mt-4 justify-center"></div>
         </div>
 
-        <div class="bg-white shadow rounded-xl p-4 col-span-1 md:col-span-2">
-          <h3 class="text-lg font-semibold mb-4">Evolución Mensual</h3>
-          <canvas id="chartMensual"></canvas>
+        <div class="bg-white shadow rounded-xl p-4 col-span-1 md:col-span-2 flex flex-col items-center justify-center">
+          <h3 class="text-lg font-semibold mb-2 text-center">Evolución Mensual</h3>
+          <canvas id="chartMensual" style="max-width:700px;max-height:350px;"></canvas>
         </div>
       </div>
     </main>
@@ -88,80 +90,138 @@
       window.location.href = "/login";
     });
 
+    let pqrsGlobal = [];
     async function cargarDatos() {
       try {
         const res = await fetch("/api/pqrs");
-        const pqrs = await res.json();
-
-        // Datos para gráficos
-        const tipoCounts = { PETICION: 0, QUEJA: 0, RECLAMO: 0, SUGERENCIA: 0 };
-        const estadoCounts = {};
-        const mensualCounts = Array(12).fill(0);
-
-        pqrs.forEach(p => {
-          tipoCounts[p.tipo] = (tipoCounts[p.tipo] || 0) + 1;
-
-          const estado = p.estado?.nombre || "Pendiente";
-          estadoCounts[estado] = (estadoCounts[estado] || 0) + 1;
-
-          const mes = new Date(p.fechaRegistro).getMonth();
-          mensualCounts[mes]++;
-        });
-
-        // Chart Tipo
-        new Chart(document.getElementById("chartTipo"), {
-          type: "pie",
-          data: {
-            labels: ["Peticiones","Quejas","Reclamos","Sugerencias"],
-            datasets: [{
-              data: [tipoCounts.PETICION, tipoCounts.QUEJA, tipoCounts.RECLAMO, tipoCounts.SUGERENCIA],
-              backgroundColor: ["#3b82f6", "#f87171", "#facc15", "#34d399"]
-            }]
-          }
-        });
-
-        // Chart Estado
-        new Chart(document.getElementById("chartEstado"), {
-          type: "doughnut",
-          data: {
-            labels: Object.keys(estadoCounts),
-            datasets: [{
-              data: Object.values(estadoCounts),
-              backgroundColor: ["#fbbf24","#60a5fa","#34d399","#ef4444","#a78bfa"]
-            }]
-          }
-        });
-
-        // Chart Evolución mensual
-        new Chart(document.getElementById("chartMensual"), {
-          type: "line",
-          data: {
-            labels: ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Sept","Oct","Nov","Dic"],
-            datasets: [{
-              label: "Solicitudes",
-              data: mensualCounts,
-              borderColor: "#3b82f6",
-              backgroundColor: "rgba(59, 130, 246, 0.2)",
-              fill: true,
-              tension: 0.3
-            }]
-          }
-        });
-
+        pqrsGlobal = await res.json();
+        renderCharts(pqrsGlobal);
       } catch (err) {
         console.error("Error cargando PQRS:", err);
       }
     }
 
+    function renderCharts(pqrs, filtro = "") {
+      // Filtrado por tipo, estado, radicado
+      const pqrsFiltrados = filtro ? pqrs.filter(p => {
+        const texto = `${p.numeroRadicado || ''} ${p.tipo || ''} ${p.estado?.nombre || ''}`;
+        // Normaliza tildes y busca en mayúsculas/minúsculas
+        const normalizedTexto = texto.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
+        const normalizedFiltro = filtro.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
+        // Busca todas las palabras completas del filtro
+        return normalizedFiltro.split(/\s+/).every(word => normalizedTexto.includes(word));
+      }) : pqrs;
+
+      // Datos para gráficos
+      const tipoCounts = { PETICION: 0, QUEJA: 0, RECLAMO: 0, SUGERENCIA: 0 };
+      const estadoCounts = {};
+      const mensualCounts = Array(12).fill(0);
+
+      pqrsFiltrados.forEach(p => {
+        if (p.tipo && tipoCounts.hasOwnProperty(p.tipo)) {
+          tipoCounts[p.tipo]++;
+        }
+        const estado = p.estado?.nombre || "Pendiente";
+        estadoCounts[estado] = (estadoCounts[estado] || 0) + 1;
+        if (p.fechaRegistro) {
+          const mes = new Date(p.fechaRegistro).getMonth();
+          if (!isNaN(mes)) mensualCounts[mes]++;
+        }
+      });
+
+      // Destruir gráficos previos si existen
+      if(window.chartTipoObj && typeof window.chartTipoObj.destroy === 'function') window.chartTipoObj.destroy();
+      if(window.chartEstadoObj && typeof window.chartEstadoObj.destroy === 'function') window.chartEstadoObj.destroy();
+      if(window.chartMensualObj && typeof window.chartMensualObj.destroy === 'function') window.chartMensualObj.destroy();
+
+      // Chart Tipo
+      window.chartTipoObj = new Chart(document.getElementById("chartTipo"), {
+        type: "pie",
+        data: {
+          labels: ["Peticiones","Quejas","Reclamos","Sugerencias"],
+          datasets: [{
+            data: [tipoCounts.PETICION, tipoCounts.QUEJA, tipoCounts.RECLAMO, tipoCounts.SUGERENCIA],
+            backgroundColor: ["#3b82f6", "#f87171", "#facc15", "#34d399"]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          animation: { animateScale: true }
+        }
+      });
+      document.getElementById("chartTipo").style.height = "320px";
+      // Dinamic legend tipo
+      document.getElementById("tipoLegend").innerHTML = ["#3b82f6", "#f87171", "#facc15", "#34d399"].map((color,i) => {
+        const label = ["Peticiones","Quejas","Reclamos","Sugerencias"][i];
+        const val = [tipoCounts.PETICION, tipoCounts.QUEJA, tipoCounts.RECLAMO, tipoCounts.SUGERENCIA][i];
+        return `<span class='flex items-center gap-1 px-2 py-1 rounded text-xs' style='background:${color};color:white;'>${label}: <b>${val}</b></span>`;
+      }).join("");
+
+      // Chart Estado
+      window.chartEstadoObj = new Chart(document.getElementById("chartEstado"), {
+        type: "doughnut",
+        data: {
+          labels: Object.keys(estadoCounts),
+          datasets: [{
+            data: Object.values(estadoCounts),
+            backgroundColor: ["#fbbf24","#60a5fa","#34d399","#ef4444","#a78bfa"]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          animation: { animateScale: true }
+        }
+      });
+      document.getElementById("chartEstado").style.height = "320px";
+      // Dinamic legend estado
+      const estadoColors = ["#fbbf24","#60a5fa","#34d399","#ef4444","#a78bfa"];
+      document.getElementById("estadoLegend").innerHTML = Object.keys(estadoCounts).map((label,i) => {
+        const val = Object.values(estadoCounts)[i];
+        const color = estadoColors[i%estadoColors.length];
+        return `<span class='flex items-center gap-1 px-2 py-1 rounded text-xs' style='background:${color};color:white;'>${label}: <b>${val}</b></span>`;
+      }).join("");
+
+      // Chart Evolución mensual
+      window.chartMensualObj = new Chart(document.getElementById("chartMensual"), {
+        type: "line",
+        data: {
+          labels: ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Sept","Oct","Nov","Dic"],
+          datasets: [{
+            label: "Solicitudes",
+            data: mensualCounts,
+            borderColor: "#3b82f6",
+            backgroundColor: "rgba(59, 130, 246, 0.2)",
+            fill: true,
+            tension: 0.3,
+            pointRadius: 5,
+            pointHoverRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: true }
+          },
+          animation: { animateScale: true }
+        }
+      });
+      document.getElementById("chartMensual").style.height = "320px";
+    }
+
     cargarDatos();
 
-    // Búsqueda (resalta coincidencias en tipo y estado)
     document.getElementById("searchInput").addEventListener("input", function() {
-      const q = this.value.toLowerCase();
-      document.querySelectorAll("#chartTipo, #chartEstado, #chartMensual").forEach(c => {
-        // Simple feedback: se puede mejorar para filtrar datos si se requiere
-        c.style.border = q ? "2px solid #6366f1" : "none";
-      });
+      const filtro = this.value.trim().toLowerCase();
+      renderCharts(pqrsGlobal, filtro);
     });
   </script>
 </body>

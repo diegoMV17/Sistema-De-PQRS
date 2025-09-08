@@ -19,6 +19,7 @@ import com.ideapro.pqrs_back.peticionario.model.Peticionario;
 import com.ideapro.pqrs_back.pqrs.model.Pqrs;
 import com.ideapro.pqrs_back.pqrs.repository.PqrsRepository;
 import com.ideapro.pqrs_back.pqrs.service.PqrsService;
+import com.ideapro.pqrs_back.pqrs.repository.PqrsEstadoRepository;
 
 import jakarta.validation.Valid;
 
@@ -30,10 +31,12 @@ public class PqrsController {
 
     private final PqrsService pqrsService;
     private final PqrsRepository pqrsRepository;
+    private final PqrsEstadoRepository estadoRepository;
 
-    public PqrsController(PqrsService pqrsService, PqrsRepository pqrsRepository) {
+    public PqrsController(PqrsService pqrsService, PqrsRepository pqrsRepository, PqrsEstadoRepository estadoRepository) {
         this.pqrsService = pqrsService;
         this.pqrsRepository = pqrsRepository;
+        this.estadoRepository = estadoRepository;
     }
 
     // Crear PQRS
@@ -123,57 +126,87 @@ public class PqrsController {
     public ResponseEntity<Map<String, Object>> obtenerHistorialPqrs() {
         return ResponseEntity.ok(pqrsService.obtenerHistorialPqrs());
     }
-// ...existing code...
 
-// ...existing code...
+    @GetMapping("/notificaciones")
+    public Map<String, Object> getNotificaciones() {
+        List<Pqrs> abiertos = pqrsRepository.findByEstadoNombreIn(List.of("Pendiente", "En Proceso"));
 
-// ...existing code...
+        int nuevos = 0;
+        int porVencer = 0;
+        LocalDate hoy = LocalDate.now();
 
-@GetMapping("/notificaciones")
-public Map<String, Object> getNotificaciones() {
-    List<Pqrs> abiertos = pqrsRepository.findByEstadoNombreIn(List.of("Pendiente", "En Proceso"));
+        // Lista para enviar detalles
+        List<Map<String, Object>> detalles = new java.util.ArrayList<>();
 
-    int nuevos = 0;
-    int porVencer = 0;
-    LocalDate hoy = LocalDate.now();
+        for (Pqrs pqrs : abiertos) {
+            LocalDate fechaRegistro = pqrs.getFechaRegistro().toLocalDate();
+            int diasHabiles = 0;
+            LocalDate fecha = fechaRegistro;
 
-    // Lista para enviar detalles
-    List<Map<String, Object>> detalles = new java.util.ArrayList<>();
-
-    for (Pqrs pqrs : abiertos) {
-        LocalDate fechaRegistro = pqrs.getFechaRegistro().toLocalDate();
-        int diasHabiles = 0;
-        LocalDate fecha = fechaRegistro;
-
-        while (fecha.isBefore(hoy)) {
-            if (fecha.getDayOfWeek() != DayOfWeek.SATURDAY && fecha.getDayOfWeek() != DayOfWeek.SUNDAY) {
-                diasHabiles++;
+            while (fecha.isBefore(hoy)) {
+                if (fecha.getDayOfWeek() != DayOfWeek.SATURDAY && fecha.getDayOfWeek() != DayOfWeek.SUNDAY) {
+                    diasHabiles++;
+                }
+                fecha = fecha.plusDays(1);
             }
-            fecha = fecha.plusDays(1);
+
+            int diasRestantes = 14 - diasHabiles;
+            if (pqrs.getEstado().getNombre().equals("Pendiente")) {
+                nuevos++;
+            }
+            if (diasRestantes <= 2 && diasRestantes > 0) {
+                porVencer++;
+            }
+
+            // Agrega el detalle de cada PQRS
+            detalles.add(Map.of(
+                "numeroRadicado", pqrs.getNumeroRadicado(),
+                "tipo", pqrs.getTipo(),
+                "estado", pqrs.getEstado().getNombre(),
+                "fechaRegistro", pqrs.getFechaRegistro().toLocalDate().toString()
+            ));
         }
 
-        int diasRestantes = 14 - diasHabiles;
-        if (pqrs.getEstado().getNombre().equals("Pendiente")) {
-            nuevos++;
-        }
-        if (diasRestantes <= 2 && diasRestantes > 0) {
-            porVencer++;
-        }
-
-        // Agrega el detalle de cada PQRS
-        detalles.add(Map.of(
-            "numeroRadicado", pqrs.getNumeroRadicado(),
-            "tipo", pqrs.getTipo(),
-            "estado", pqrs.getEstado().getNombre(),
-            "fechaRegistro", pqrs.getFechaRegistro().toLocalDate().toString()
-        ));
+        return Map.of(
+            "nuevos", nuevos,
+            "porVencer", porVencer,
+            "detalles", detalles
+        );
     }
 
-    return Map.of(
-        "nuevos", nuevos,
-        "porVencer", porVencer,
-        "detalles", detalles
-    );
-}
+    // Cambiar estado por ID
+    @PatchMapping("/{id}/estado")
+    public ResponseEntity<Pqrs> actualizarEstado(@PathVariable Long id, @RequestBody Map<String,String> body) {
+        String nuevoNombre = body.get("estado");
+        if (nuevoNombre == null || nuevoNombre.isBlank()) return ResponseEntity.badRequest().build();
+
+        Pqrs pqrs = pqrsService.obtenerPqrs(id);
+        if (pqrs == null) return ResponseEntity.notFound().build();
+
+        var estado = estadoRepository.findByNombre(nuevoNombre).orElse(null);
+        if (estado == null) return ResponseEntity.badRequest().build();
+
+        pqrs.setEstado(estado);
+        Pqrs actualizado = pqrsRepository.save(pqrs);
+        return ResponseEntity.ok(actualizado);
+    }
+
+    // Cambiar estado por número de radicado
+    @PatchMapping("/estado/radicado/{numeroRadicado}")
+    public ResponseEntity<Pqrs> actualizarEstadoPorRadicado(@PathVariable String numeroRadicado, @RequestBody Map<String,String> body) {
+        String nuevoNombre = body.get("estado");
+        if (nuevoNombre == null || nuevoNombre.isBlank()) return ResponseEntity.badRequest().build();
+
+        List<Pqrs> lista = pqrsService.buscarPorNumeroRadicado(numeroRadicado);
+        if (lista.isEmpty()) return ResponseEntity.notFound().build();
+        Pqrs pqrs = lista.get(0);
+
+        var estado = estadoRepository.findByNombre(nuevoNombre).orElse(null);
+        if (estado == null) return ResponseEntity.badRequest().build();
+
+        pqrs.setEstado(estado);
+        Pqrs actualizado = pqrsRepository.save(pqrs);
+        return ResponseEntity.ok(actualizado);
+    }
 
 }
