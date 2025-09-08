@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema PQRS - Reportes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+  <!-- Top Navigation -->
+  <nav class="bg-slate-800 border-b border-slate-700">
+    <div class="flex items-center justify-between px-6 py-4">
+      <div class="text-xl font-semibold text-white">
+        Sistema <span class="text-blue-400">PQRS</span>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <!-- Campana con dropdown -->
+        <div class="relative">
+          <button class="text-slate-300 hover:text-white transition-colors relative" id="campanaBtn">
+            <!-- Icono campana -->
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405C18.21 15.21 18 14.702 18 14V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3c0 .702-.21 1.21-.595 1.595L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+            </svg>
+            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" id="notiCount">0</span>
+          </button>
+
+          <!-- Dropdown -->
+          <div id="dropdownNotificaciones" 
+              class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-slate-200 hidden z-50">
+            <div class="p-3 border-b font-semibold text-slate-700">Notificaciones</div>
+            <div id="listaNotificaciones" class="max-h-64 overflow-y-auto text-sm">
+              <p class="p-3 text-slate-500">No tienes notificaciones pendientes.</p>
+            </div>
+            <div class="p-2 text-center">
+              <button onclick="document.getElementById('dropdownNotificaciones').classList.add('hidden')" 
+                      class="text-blue-600 text-xs hover:underline">Cerrar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 text-slate-300">
+          <!-- Icono usuario -->
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A9 9 0 0112 15a9 9 0 016.879 2.804M15 11a3 3 0 10-6 0 3 3 0 006 0z"></path>
+          </svg>
+          <span class="hidden md:block">Juan Pérez</span>
+        </div>
+
+        <button id="logoutBtn" class="text-slate-300 hover:text-white transition-colors">
+          <!-- Icono logout -->
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Layout principal -->
+  <div class="flex min-h-[calc(100vh-64px)]">
+    
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white border-r border-slate-200">
+      <div class="p-6">
+        <h1 class="text-xl font-bold text-slate-800 mb-6">Sistema <span class="text-blue-600">PQRS</span></h1>
+        <nav class="space-y-2">
+          <a href="/dashboard" class="flex items-center p-2 rounded-lg hover:bg-slate-100 text-slate-700">
+            🏠 <span class="ml-2">Dashboard</span>
+          </a>
+          <a href="/reportes" class="flex items-center p-2 rounded-lg bg-slate-100 text-slate-900 font-medium">
+            📊 <span class="ml-2">Reportes</span>
+          </a>
+           <a href="/reportes" class="flex items-center p-2 rounded-lg bg-slate-100 text-slate-900 font-medium">
+            📖 <span class="ml-2">Historial de PQRS</span>
+          </a>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- Contenido principal -->
+    <main class="flex-1 p-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-2">Historial de PQRS</h2>
+      
+      <!-- Botón general -->
+      <div class="mb-4">
+        <button id="btnEditarEstado" 
+          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow">
+          ✏️ Editar estado
+        </button>
+      </div>
+
+      <!-- Tabla de solicitudes -->
+      <div class="mt-4 bg-white p-6 rounded-2xl shadow">
+        <h3 class="text-lg font-semibold text-gray-700 mb-4">Listado de PQRS</h3>
+        <div class="overflow-x-auto">
+          <table class="min-w-full border-collapse border border-slate-200 text-sm">
+            <thead class="bg-slate-100">
+              <tr class="text-left font-semibold text-gray-600">
+                <th class="border-b border-slate-300 px-6 py-3">Radicado</th>
+                <th class="border-b border-slate-300 px-6 py-3">Tipo</th>
+                <th class="border-b border-slate-300 px-6 py-3">Estado</th>
+                <th class="border-b border-slate-300 px-6 py-3">Descripción</th>
+                <th class="border-b border-slate-300 px-6 py-3">Peticionario</th>
+                <th class="border-b border-slate-300 px-6 py-3">Fecha</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody" class="text-gray-600">
+              <!-- Aquí se insertan filas dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Script -->
+  <script>
+    const form = document.getElementById('solicitudForm');
+    const tableBody = document.getElementById('tableBody');
+    const campanaBtn = document.getElementById('campanaBtn');
+    const dropdownNotificaciones = document.getElementById('dropdownNotificaciones');
+    const btnEditarEstado = document.getElementById('btnEditarEstado');
+
+    // Manejo del formulario
+    if (form) {
+      form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const radicado = document.getElementById('radicado').value;
+        const tipo = document.getElementById('tipo').value;
+        const estado = document.getElementById('estado').value;
+        const descripcion = document.getElementById('descripcion').value;
+        const peticionario = document.getElementById('peticionario').value;
+        const fecha = document.getElementById('fecha').value;
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="border-b border-slate-200 px-6 py-3">${radicado}</td>
+          <td class="border-b border-slate-200 px-6 py-3">${tipo}</td>
+          <td class="border-b border-slate-200 px-6 py-3">${estado}</td>
+          <td class="border-b border-slate-200 px-6 py-3">${descripcion}</td>
+          <td class="border-b border-slate-200 px-6 py-3">${peticionario}</td>
+          <td class="border-b border-slate-200 px-6 py-3">${fecha}</td>
+        `;
+        tableBody.appendChild(row);
+        form.reset();
+      });
+    }
+
+    // Toggle dropdown notificaciones
+    campanaBtn.addEventListener('click', () => {
+      dropdownNotificaciones.classList.toggle('hidden');
+    });
+
+    // Acción del botón general "Editar estado"
+    btnEditarEstado.addEventListener('click', () => {
+     
+    });
+  </script>
+
+</body>
+</html>
