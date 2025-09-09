@@ -174,6 +174,15 @@
                 const data = await response.json();
                 localStorage.setItem('token', data.token || '');
                 localStorage.setItem('userEmail', email);
+                // Verificación visual del token
+                if (!data.token || data.token === '') {
+                    errorMessage.textContent = 'Error: El backend no devolvió un token válido. No se puede iniciar sesión.';
+                    errorMessage.classList.remove('hidden');
+                    loginButton.disabled = false;
+                    loginText.textContent = 'Iniciar Sesión';
+                    loginSpinner.classList.add('hidden');
+                    return;
+                }
                 // Verificar rol antes de redirigir
                 if (data.rol === 'ADMIN') {
                     window.location.href = 'dashboard';

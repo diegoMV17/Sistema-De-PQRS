@@ -38,7 +38,11 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
-            System.out.println("🔍 Token extraído: " + token.substring(0, 20) + "...");
+            if (token.length() >= 20) {
+                System.out.println("🔍 Token extraído: " + token.substring(0, 20) + "...");
+            } else {
+                System.out.println("🔍 Token extraído (corto): " + token);
+            }
 
             try {
                 String username = jwtUtil.extractUsername(token);

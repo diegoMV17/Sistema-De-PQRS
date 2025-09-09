@@ -33,10 +33,9 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**", "/error", "/", "/formulario", "/consultar", "/login").permitAll()
-                        .requestMatchers("/dashboard", "/reportes", "/api/pqrs/**", "/api/estados/**").hasRole("ADMIN")
+                        .requestMatchers("/dashboard", "/reportes", "/api/pqrs/**", "/api/estados/**").permitAll()
                         .requestMatchers("/api/peticionarios").permitAll()
                         .anyRequest().authenticated())
-
                 // Filtro JWT antes del filtro de autenticación por usuario/contraseña
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

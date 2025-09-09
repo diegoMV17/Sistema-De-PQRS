@@ -9,7 +9,6 @@ package com.ideapro.pqrs_back.peticionario.model;
 import com.ideapro.pqrs_back.pqrs.model.Pqrs;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 
 import java.util.List;
 
@@ -20,24 +19,19 @@ public class Peticionario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
     private String tipoDocumento;
 
-    @NotBlank
     @Column(unique = true, nullable = false)
     private String numeroDocumento;
 
-    @NotBlank
     private String nombres;
 
-    @NotBlank
     private String apellidos;
 
     @Email
     @Column(unique = true)
     private String email;
 
-    @NotBlank
     private String telefono;
 
     @OneToMany(mappedBy = "peticionario", cascade = CascadeType.ALL)
