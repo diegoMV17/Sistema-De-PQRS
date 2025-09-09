@@ -32,11 +32,8 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/error").permitAll()
-                        .requestMatchers("/", "/formulario", "/consultar", "/dashboard", "/login", "/reportes")
-                        .permitAll()
-                        .requestMatchers("/api/pqrs/**").permitAll()
+                        .requestMatchers("/auth/**", "/error", "/", "/formulario", "/consultar", "/login").permitAll()
+                        .requestMatchers("/dashboard", "/reportes", "/api/pqrs/**", "/api/estados/**").hasRole("ADMIN")
                         .requestMatchers("/api/peticionarios").permitAll()
                         .anyRequest().authenticated())
 

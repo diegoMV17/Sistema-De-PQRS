@@ -56,4 +56,9 @@ public class AuthService {
 
         return userRepository.save(newUser);
     }
+
+    public User findByEmail(String email) {
+        var users = userRepository.findByEmail(email);
+        return users.isEmpty() ? null : users.get(0);
+    }
 }

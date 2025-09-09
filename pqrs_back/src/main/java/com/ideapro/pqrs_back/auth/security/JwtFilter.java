@@ -53,7 +53,7 @@ public class JwtFilter extends OncePerRequestFilter {
                         System.out.println("🔍 Rol del usuario: " + user.getRol());
 
                         List<SimpleGrantedAuthority> authorities =
-                                List.of(new SimpleGrantedAuthority(user.getRol()));
+                                List.of(new SimpleGrantedAuthority("ROLE_" +user.getRol()));
 
                         System.out.println("🔍 Autoridades creadas: " + authorities);
 

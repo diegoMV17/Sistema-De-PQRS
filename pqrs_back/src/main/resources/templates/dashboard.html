@@ -47,7 +47,16 @@
     <div class="bg-white border border-slate-200 rounded-lg shadow-sm mt-6">
       <div class="p-4 border-b border-slate-200 flex justify-between items-center">
         <h2 class="text-lg font-semibold">Lista de solicitudes</h2>
-        <input id="searchInput" type="text" placeholder="Buscar solicitud..." class="px-3 py-2 border rounded-lg text-sm w-64 focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <div class="flex gap-2 items-center">
+          <select id="estadoFilter" class="px-2 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <option value="Todos">Todos</option>
+            <option value="Pendiente">Pendiente</option>
+            <option value="En Proceso">En Proceso</option>
+            <option value="Resuelto">Resuelto</option>
+            <option value="Cancelado">Cancelado</option>
+          </select>
+          <input id="searchInput" type="text" placeholder="Buscar solicitud..." class="px-3 py-2 border rounded-lg text-sm w-64 focus:outline-none focus:ring-2 focus:ring-blue-400">
+        </div>
       </div>
       <div class="p-4 overflow-x-auto">
         <table class="min-w-full border-collapse border border-slate-200 text-sm">
@@ -77,51 +86,104 @@
   });
   const searchInput = document.getElementById("searchInput");
   const tableBody = document.getElementById("tableBody");
+  let estadoActual = "Todos";
+  document.getElementById("estadoFilter").addEventListener("change", function() {
+    estadoActual = this.value;
+    cargarPQRS();
+  });
   // --- Función para cargar PQRS ---
   async function cargarPQRS() {
     try {
-      const res = await fetch("/api/pqrs");
+      const res = await fetch("/api/pqrs", {
+        headers: {
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
+        }
+      });
       if (!res.ok) throw new Error("HTTP " + res.status);
       const pqrs = await res.json();
       let totalP = 0, totalQ = 0, totalR = 0, totalS = 0;
       tableBody.innerHTML = "";
-      pqrs.forEach(p => {
-        if (p.estado?.nombre !== "Pendiente") return; // Solo mostrar pendientes
-        const descripcion = p.descripcion && p.descripcion.length > 50 ? p.descripcion.substring(0, 50) + "..." : (p.descripcion || "");
-        const correo = p.peticionario?.correo || p.peticionario?.email || "-";
-        const row = document.createElement("tr");
-        row.className = "hover:bg-slate-50 transition-colors duration-300";
-        row.dataset.id = p.id;
-        row.innerHTML = `
-          <td class='border-b border-slate-200 px-6 py-3'>${p.numeroRadicado || ""}</td>
-          <td class='border-b border-slate-200 px-6 py-3'>${p.tipo || ""}</td>
-          <td class='border-b border-slate-200 px-6 py-3'>${p.estado?.nombre || ""}</td>
-          <td class='border-b border-slate-200 px-6 py-3' title='${p.descripcion || ""}'>${descripcion}</td>
-          <td class='border-b border-slate-200 px-6 py-3'>${(p.peticionario?.nombres||"") + " " + (p.peticionario?.apellidos||"")}</td>
-          <td class='border-b border-slate-200 px-6 py-3'>${correo}</td>
-          <td class='border-b border-slate-200 px-6 py-3'>${p.fechaRegistro ? new Date(p.fechaRegistro).toLocaleDateString() : ""}</td>
-          <td class='border-b border-slate-200 px-6 py-3 relative'>
-            <button onclick="mostrarOpcionesEstado('${p.id}', this)" class="px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">Cambiar Estado</button>
-            <div class="estado-opciones hidden absolute left-1/2 -translate-x-1/2 top-10 min-w-[180px] bg-white border border-slate-300 rounded-lg shadow-lg p-3 z-50 flex flex-col gap-2">
-              <label class="text-xs text-slate-600 mb-1">Selecciona nuevo estado:</label>
-              <select class="estado-select border rounded px-2 py-1 text-xs focus:ring-2 focus:ring-blue-400">
-                <option value="Pendiente">Pendiente</option>
-                <option value="En Proceso">En Proceso</option>
-                <option value="Resuelto">Resuelto</option>
-                <option value="Cancelado">Cancelado</option>
-              </select>
-              <button class="guardar-estado bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs mt-2">Guardar</button>
-              <button type="button" class="cerrar-estado bg-gray-200 hover:bg-gray-300 text-gray-700 px-2 py-1 rounded text-xs mt-1">Cancelar</button>
-            </div>
-          </td>
-        `;
-        tableBody.appendChild(row);
-        switch(p.tipo) {
-          case "PETICION": totalP++; break;
-          case "QUEJA": totalQ++; break;
-          case "RECLAMO": totalR++; break;
-          case "SUGERENCIA": totalS++; break;
+      // Filtrar por estado seleccionado
+      let pqrsFiltrados = pqrs;
+      if (estadoActual !== "Todos") {
+        pqrsFiltrados = pqrs.filter(p => p.estado?.nombre === estadoActual);
+      }
+      // Agrupar PQRS por estado
+      const grupos = {};
+      pqrsFiltrados.forEach(p => {
+        const estado = p.estado?.nombre || "Sin Estado";
+        if (!grupos[estado]) grupos[estado] = [];
+        grupos[estado].push(p);
+      });
+      // Ordenar pendientes por próximos a vencer
+      if (grupos["Pendiente"]) {
+        grupos["Pendiente"].sort((a, b) => {
+          function diasHabilesRestantes(p) {
+            if (!p.fechaRegistro) return 99;
+            const hoy = new Date();
+            let fecha = new Date(p.fechaRegistro);
+            let diasHabiles = 0;
+            while (fecha < hoy) {
+              const dia = fecha.getDay();
+              if (dia !== 0 && dia !== 6) diasHabiles++;
+              fecha.setDate(fecha.getDate() + 1);
+            }
+            return 14 - diasHabiles;
+          }
+          return diasHabilesRestantes(a) - diasHabilesRestantes(b);
+        });
+      }
+      // Ordenar otros por fecha
+      Object.keys(grupos).forEach(estado => {
+        if (estado !== "Pendiente") {
+          grupos[estado].sort((a, b) => new Date(a.fechaRegistro) - new Date(b.fechaRegistro));
         }
+      });
+      // Mostrar por grupos: pendientes primero, luego otros
+      ["Pendiente", ...Object.keys(grupos).filter(e => e !== "Pendiente")].forEach(estado => {
+        if (!grupos[estado]) return;
+        // Insertar fila de grupo
+        const grupoRow = document.createElement("tr");
+        grupoRow.innerHTML = `<td colspan='8' class='bg-blue-50 text-blue-800 font-bold px-6 py-2'>${estado}</td>`;
+        tableBody.appendChild(grupoRow);
+        grupos[estado].forEach(p => {
+          // Mostrar todos los estados de PQRS
+          const descripcion = p.descripcion && p.descripcion.length > 50 ? p.descripcion.substring(0, 50) + "..." : (p.descripcion || "");
+          const correo = p.peticionario?.correo || p.peticionario?.email || "-";
+          const row = document.createElement("tr");
+          row.className = "hover:bg-slate-50 transition-colors duration-300";
+          row.dataset.id = p.id;
+          row.innerHTML = `
+            <td class='border-b border-slate-200 px-6 py-3'>${p.numeroRadicado || ""}</td>
+            <td class='border-b border-slate-200 px-6 py-3'>${p.tipo || ""}</td>
+            <td class='border-b border-slate-200 px-6 py-3'>${p.estado?.nombre || ""}</td>
+            <td class='border-b border-slate-200 px-6 py-3' title='${p.descripcion || ""}'>${descripcion}</td>
+            <td class='border-b border-slate-200 px-6 py-3'>${(p.peticionario?.nombres||"") + " " + (p.peticionario?.apellidos||"")}</td>
+            <td class='border-b border-slate-200 px-6 py-3'>${correo}</td>
+            <td class='border-b border-slate-200 px-6 py-3'>${p.fechaRegistro ? new Date(p.fechaRegistro).toLocaleDateString() : ""}</td>
+            <td class='border-b border-slate-200 px-6 py-3 relative'>
+              <button onclick="mostrarOpcionesEstado('${p.id}', this)" class="px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">Cambiar Estado</button>
+              <div class="estado-opciones hidden absolute left-1/2 -translate-x-1/2 top-10 min-w-[180px] bg-white border border-slate-300 rounded-lg shadow-lg p-3 z-50 flex flex-col gap-2">
+                <label class="text-xs text-slate-600 mb-1">Selecciona nuevo estado:</label>
+                <select class="estado-select border rounded px-2 py-1 text-xs focus:ring-2 focus:ring-blue-400">
+                  <option value="Pendiente">Pendiente</option>
+                  <option value="En Proceso">En Proceso</option>
+                  <option value="Resuelto">Resuelto</option>
+                  <option value="Cancelado">Cancelado</option>
+                </select>
+                <button class="guardar-estado bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs mt-2">Guardar</button>
+                <button type="button" class="cerrar-estado bg-gray-200 hover:bg-gray-300 text-gray-700 px-2 py-1 rounded text-xs mt-1">Cancelar</button>
+              </div>
+            </td>
+          `;
+          tableBody.appendChild(row);
+          switch(p.tipo) {
+            case "PETICION": totalP++; break;
+            case "QUEJA": totalQ++; break;
+            case "RECLAMO": totalR++; break;
+            case "SUGERENCIA": totalS++; break;
+          }
+        });
       });
       document.getElementById("totalPeticiones").innerText = totalP;
       document.getElementById("totalQuejas").innerText = totalQ;
@@ -151,7 +213,11 @@
   // --- Función para actualizar notificaciones ---
   async function actualizarNotificaciones() {
     try {
-      const res = await fetch("/api/pqrs/notificaciones");
+      const res = await fetch("/api/pqrs/notificaciones", {
+        headers: {
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
+        }
+      });
       if (!res.ok) throw new Error("Error HTTP: " + res.status);
       const data = await res.json();
       let contenido = "";
@@ -183,7 +249,10 @@
     try {
       const res = await fetch(`/api/pqrs/${id}/estado`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
+        },
         body: JSON.stringify({ estado: nuevoEstado })
       });
       if (!res.ok) throw new Error("Error HTTP " + res.status);
@@ -231,6 +300,10 @@
     if (!campanaBtn.contains(e.target) && !dropdown.contains(e.target)) {
       dropdown.classList.add("hidden");
     }
+  });
+  window.addEventListener('beforeunload', function() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userEmail');
   });
 </script>
 </body>

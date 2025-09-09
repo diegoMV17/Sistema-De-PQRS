@@ -93,7 +93,11 @@
     let pqrsGlobal = [];
     async function cargarDatos() {
       try {
-        const res = await fetch("/api/pqrs");
+        const res = await fetch("/api/pqrs", {
+          headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+          }
+        });
         pqrsGlobal = await res.json();
         renderCharts(pqrsGlobal);
       } catch (err) {

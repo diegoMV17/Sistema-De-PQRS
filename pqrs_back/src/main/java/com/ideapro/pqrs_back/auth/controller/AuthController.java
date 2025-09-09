@@ -29,8 +29,12 @@ public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         String token = authService.login(request.getEmail(), request.getContrasena());
 
         if (token != null) {
+            // Obtener el usuario y su rol
+            User user = authService.findByEmail(request.getEmail());
+            String rol = user != null ? user.getRol() : "";
             return ResponseEntity.ok(Map.of(
                     "token", token,
+                    "rol", rol,
                     "message", "Login exitoso"));
         }
 

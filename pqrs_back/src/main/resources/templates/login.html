@@ -174,9 +174,13 @@
                 const data = await response.json();
                 localStorage.setItem('token', data.token || '');
                 localStorage.setItem('userEmail', email);
-
-                // 👇 Redirigir al Dashboard
-                window.location.href = 'dashboard';
+                // Verificar rol antes de redirigir
+                if (data.rol === 'ADMIN') {
+                    window.location.href = 'dashboard';
+                } else {
+                    errorMessage.textContent = 'Solo los administradores pueden acceder al dashboard.';
+                    errorMessage.classList.remove('hidden');
+                }
             } else if(response.status === 401) {
                 errorMessage.textContent = 'Credenciales incorrectas';
                 errorMessage.classList.remove('hidden');
