@@ -29,7 +29,7 @@ import jakarta.persistence.EntityNotFoundException;
 @Service
 public class PqrsService {
 
-    private final EmailService emailService;
+    public final EmailService emailService;
 
     @Autowired
     private PqrsRepository pqrsRepository;
@@ -40,7 +40,7 @@ public class PqrsService {
     @Autowired
     private PeticionarioRepository peticionarioRepository;
 
-    PqrsService(EmailService emailService) {
+    public PqrsService(EmailService emailService) {
         this.emailService = emailService;
     }
 
