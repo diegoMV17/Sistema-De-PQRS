@@ -6,9 +6,10 @@ import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+
 
 import com.ideapro.pqrs_back.peticionario.model.Peticionario;
 import com.ideapro.pqrs_back.peticionario.repository.PeticionarioRepository;
@@ -22,7 +23,8 @@ import java.util.Optional;
 @SpringBootTest
 class PeticionarioTest {
     
-    @MockBean
+
+    @Mock
     private PeticionarioRepository peticionarioRepository;
     
     @Autowired

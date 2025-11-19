@@ -6,9 +6,10 @@ import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.ideapro.pqrs_back.peticionario.model.Peticionario;
 import com.ideapro.pqrs_back.peticionario.repository.PeticionarioRepository;
@@ -25,22 +26,22 @@ import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.*;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class PqrsTest {
     
-    @MockBean
+    @Mock
     private PqrsRepository pqrsRepository;
     
-    @MockBean
+    @Mock
     private PqrsEstadoRepository estadoRepository;
     
-    @MockBean
+    @Mock
     private PeticionarioRepository peticionarioRepository;
     
-    @MockBean
+    @Mock
     private EmailService emailService;
     
-    @Autowired
+    @InjectMocks
     private PqrsService pqrsService;
     
     private Pqrs testPqrs;

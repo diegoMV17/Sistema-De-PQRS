@@ -4,11 +4,11 @@ import java.util.Date;
 
 import javax.crypto.SecretKey;
 
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import io.jsonwebtoken.Jwts;
-
 import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
 @Component
@@ -27,12 +27,22 @@ public class JwtUtil {
     }
 
     public String extractUsername(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(SECRET_KEY)
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+        if (token == null || token.trim().isEmpty()) {
+            return null;
+        }
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(SECRET_KEY)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getSubject();
+        } catch (io.jsonwebtoken.JwtException | IllegalArgumentException ex) {
+            return null;
+        }
     }
 
     public String extractRole(String token) {
@@ -49,6 +59,21 @@ public class JwtUtil {
             Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token);
             return true;
         } catch (JwtException e) {
+            return false;
+        }
+    }
+
+    public boolean validateToken(String token, UserDetails userDetails) {
+        if (token == null || token.trim().isEmpty() || userDetails == null) {
+            return false;
+        }
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        try {
+            final String username = extractUsername(token);
+            return username != null && username.equals(userDetails.getUsername());
+        } catch (io.jsonwebtoken.JwtException | IllegalArgumentException ex) {
             return false;
         }
     }

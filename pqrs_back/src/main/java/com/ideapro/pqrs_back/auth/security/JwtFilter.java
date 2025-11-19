@@ -33,55 +33,38 @@ public class JwtFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        String authHeader = request.getHeader("Authorization");
-        System.out.println("🔍 Authorization Header: " + authHeader);
+        final String authHeader = request.getHeader("Authorization");
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
-            if (token.length() >= 20) {
-                System.out.println("🔍 Token extraído: " + token.substring(0, 20) + "...");
-            } else {
-                System.out.println("🔍 Token extraído (corto): " + token);
+        // Short-circuit when header missing or doesn't start with Bearer
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            // Optional: log at debug
+            // logger.debug("No Bearer Authorization header present");
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        final String token = authHeader.substring(7);
+        final String username = jwtUtil.extractUsername(token);
+
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            var userOptional = userRepository.findByEmail(username);
+
+            if (!userOptional.isEmpty() && jwtUtil.validateToken(token)) {
+                var user = userOptional.get(0);
+
+                List<SimpleGrantedAuthority> authorities =
+                        List.of(new SimpleGrantedAuthority("ROLE_" +user.getRol()));
+
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(
+                                user.getEmail(),
+                                null,
+                                authorities
+                        );
+
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
             }
-
-            try {
-                String username = jwtUtil.extractUsername(token);
-                System.out.println("🔍 Username del token: " + username);
-
-                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    var userOptional = userRepository.findByEmail(username);
-                    System.out.println("🔍 Usuario encontrado en BD: " + !userOptional.isEmpty());
-
-                    if (!userOptional.isEmpty() && jwtUtil.validateToken(token)) {
-                        var user = userOptional.get(0);
-                        System.out.println("🔍 Rol del usuario: " + user.getRol());
-
-                        List<SimpleGrantedAuthority> authorities =
-                                List.of(new SimpleGrantedAuthority("ROLE_" +user.getRol()));
-
-                        System.out.println("🔍 Autoridades creadas: " + authorities);
-
-                        UsernamePasswordAuthenticationToken authToken =
-                                new UsernamePasswordAuthenticationToken(
-                                        user.getEmail(),
-                                        null,
-                                        authorities
-                                );
-
-                        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                        SecurityContextHolder.getContext().setAuthentication(authToken);
-
-                        System.out.println("✅ Usuario autenticado correctamente");
-                    } else {
-                        System.out.println("❌ Token inválido o usuario no encontrado");
-                    }
-                }
-            } catch (Exception e) {
-                System.out.println("❌ Error procesando JWT: " + e.getMessage());
-                e.printStackTrace();
-            }
-        } else {
-            System.out.println("❌ No hay header Authorization o no empieza con Bearer");
         }
 
         filterChain.doFilter(request, response);
