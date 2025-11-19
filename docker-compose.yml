@@ -1,21 +1,45 @@
+version: '3.8'
+
 services:
-  backend:
-    build: ./pqrs_back
-    container_name: backend-api
-    ports:
-      - "8080:8080"
+  db:
+    image: postgres:15
+    container_name: pqrs_db
+    restart: always
+    environment:
+      POSTGRES_DB: pqrs_hakaton
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - appnet
 
-  frontend:
-    build: ./pqrs_front
-    container_name: frontend-app
+  backend:
+    build:
+      context: ./pqrs_back
+      dockerfile: Dockerfile
+    container_name: pqrs_back
+    restart: on-failure
     ports:
-      - "80:80"
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/pqrs_hakaton
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_MAIL_USERNAME: example@gmail.com
+      SPRING_MAIL_PASSWORD: "contraseña del correo"
     depends_on:
-      - backend
+      - db
     networks:
       - appnet
+
+volumes:
+  pgdata:
 
 networks:
   appnet:
