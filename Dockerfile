@@ -3,13 +3,14 @@ FROM node:18 AS frontend-builder
 
 WORKDIR /app
 
-# Copiar proyecto Angular
-COPY pqrs_front/ /app/
+# Copiar solo package.json primero (mejor cache)
+COPY pqrs_front/package*.json ./
 
-# Instalar dependencias
 RUN npm install
 
-# Compilar Angular
+# Copiar el resto del frontend
+COPY pqrs_front/ ./
+
 RUN npm run build --prod
 
 
@@ -18,13 +19,11 @@ FROM maven:3.8.8-eclipse-temurin-17 AS backend-builder
 
 WORKDIR /build
 
-# Copiar backend
-COPY pqrs_back/ /build/
+COPY pqrs_back/ ./
 
-# Copiar Angular dist al backend (carpeta static)
+# Copiar Angular dist
 COPY --from=frontend-builder /app/dist/* /build/src/main/resources/static/
 
-# Build backend
 RUN mvn -B -DskipTests package
 
 
@@ -33,7 +32,6 @@ FROM eclipse-temurin:17-jdk-jammy
 
 WORKDIR /app
 
-# Copiar jar construido
 COPY --from=backend-builder /build/target/*.jar app.jar
 
 EXPOSE 8080
