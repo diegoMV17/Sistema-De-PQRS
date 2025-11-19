@@ -1,13 +1,15 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
-
-COPY . .
-RUN dotnet restore
-RUN dotnet publish -c Release -o /app
-
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+FROM maven:3.9.6-amazoncorretto-17 AS build
 WORKDIR /app
-COPY --from=build /app .
 
-EXPOSE 5000
-ENTRYPOINT ["dotnet", "Backend.dll"]
+COPY pom.xml .
+COPY src ./src
+
+RUN mvn clean package -DskipTests
+
+FROM amazoncorretto:17
+WORKDIR /app
+
+COPY --from=build /app/target/*.jar app.jar
+
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]
