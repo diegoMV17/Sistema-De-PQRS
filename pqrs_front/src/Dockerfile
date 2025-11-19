@@ -1,22 +1,26 @@
-# Etapa 1: Build Angular
-FROM node:18 AS builder
+# Etapa 1: Construcción del frontend Angular
+FROM node:18 AS frontend-builder
+
 WORKDIR /app
 
-# Copiar package.json primero para aprovechar la cache
-COPY package*.json ./
+# Copiamos SOLO los archivos necesarios para instalar las dependencias
+COPY package.json package-lock.json ./
+
+# Instalamos dependencias
 RUN npm install
 
-# Copiar el resto del código Angular
+# Ahora sí copiamos el resto del proyecto
 COPY . .
 
-# Compilar Angular
+# Compilamos Angular
 RUN npm run build --prod
 
 # Etapa 2: Servir con Nginx
 FROM nginx:alpine
-COPY --from=builder /app/dist/ /usr/share/nginx/html
 
-# Abrir puerto
+# Copiamos el build generado al servidor Nginx
+COPY --from=frontend-builder /app/dist /usr/share/nginx/html
+
 EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]
